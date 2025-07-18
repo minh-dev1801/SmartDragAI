@@ -17,7 +17,9 @@ export const Layout: React.FC = () => {
         onCollapse={setCollapsed}
         theme="light"
         width="220"
-        className="!border-r !border-r-gray-300"
+        className={`!border-r !border-r-gray-300 ${
+          collapsed && "!bg-blue-500"
+        }`}
       >
         <div className="flex items-center gap-2 justify-center mt-4 mb-8">
           <Image
@@ -34,6 +36,9 @@ export const Layout: React.FC = () => {
           defaultSelectedKeys={["1"]}
           mode="inline"
           items={menuItems}
+          className={`!border-r !border-r-gray-300 ${
+            collapsed && "!bg-blue-500"
+          }`}
         />
       </Sider>
       <div className="w-1/4 h-full overflow-y-auto py-2 px-4 border border-gray-300 rounded-lg">
