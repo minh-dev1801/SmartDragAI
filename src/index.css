@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+.ant-layout-sider-trigger {
+  @apply !border-r !border-r-gray-300 !border-t !border-t-gray-300;
+}
+.ant-menu-item-icon{
+  @apply !text-[20px];
+}

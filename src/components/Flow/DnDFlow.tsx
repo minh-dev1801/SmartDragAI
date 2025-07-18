@@ -12,8 +12,7 @@ import {
   type OnConnect,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { initialNodes, nodeTypes } from "../../data/nodes";
-import { initialEdges } from "../../data/edges";
+import { initialEdges, initialNodes, nodeTypes } from "../../constants/flow";
 import { useDnD } from "../../hooks/useDnD";
 
 function DnDFlow() {

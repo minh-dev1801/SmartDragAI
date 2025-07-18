@@ -1,13 +1,7 @@
-import {
-  DesktopOutlined,
-  FileOutlined,
-  PieChartOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
 import Element from "../components/tabs/Element";
 import Resource from "../components/tabs/Resource";
 import Variable from "../components/tabs/Variable";
+import { MdChecklist, MdEditCalendar } from "react-icons/md";
 
 export const tabItems = [
   { label: "Thành phần", key: "1", children: <Element /> },
@@ -16,26 +10,20 @@ export const tabItems = [
 ];
 
 export const menuItems = [
-  { key: "1", icon: <PieChartOutlined />, label: "Option 1" },
-  { key: "2", icon: <DesktopOutlined />, label: "Option 2" },
   {
     key: "sub1",
-    icon: <UserOutlined />,
-    label: "User",
-    children: [
-      { key: "3", label: "Tom" },
-      { key: "4", label: "Bill" },
-      { key: "5", label: "Alex" },
-    ],
+    icon: <MdEditCalendar />,
+    label: "Thiết kế quy trình",
+    children: [{ key: "1", label: "Quản lý quy trình" }],
   },
   {
     key: "sub2",
-    icon: <TeamOutlined />,
-    label: "Team",
+    icon: <MdChecklist />,
+    label: "Lượt chạy quy trình",
     children: [
-      { key: "6", label: "Team 1" },
-      { key: "8", label: "Team 2" },
+      { key: "2", label: "Danh sách lượt chạy" },
+      { key: "3", label: "Các bước đã thực hiện" },
+      { key: "4", label: "Các bước cần thực hiện" },
     ],
   },
-  { key: "9", icon: <FileOutlined />, label: "Files" },
 ];

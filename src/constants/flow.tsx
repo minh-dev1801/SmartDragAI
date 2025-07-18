@@ -45,3 +45,7 @@ export const initialNodes = [
     position: { x: 100, y: 150 },
   },
 ];
+
+export const initialEdges = [
+  { id: "n1-n2", source: "1", target: "2", type: "step" },
+];

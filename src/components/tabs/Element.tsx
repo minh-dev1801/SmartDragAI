@@ -1,7 +1,7 @@
 import React from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import { Input } from "antd";
-import { events, gateways, tasks } from "../../data/nodes";
+import { events, gateways, tasks } from "../../constants/flow";
 import CardItem from "./CardItem";
 
 const Element: React.FC = () => {
