@@ -1,15 +1,16 @@
 @import "tailwindcss";
+@import "./styles/utilities";
 
-.ant-layout-sider-trigger {
-  @apply !border-r !border-r-gray-300 !border-t !border-t-gray-300;
-}
-.ant-menu-item-icon {
-  @apply !text-[20px];
-}
-.ant-layout-sider.ant-layout-sider-collapsed .ant-menu-item-icon,
-.ant-layout-sider.ant-layout-sider-collapsed .ant-menu-submenu-title {
-  color: white;
-}
-.ant-layout-sider.ant-layout-sider-collapsed .ant-layout-sider-trigger {
-  @apply !bg-blue-500 !text-white;
+@theme {
+  --text-12px: 12px;
+  --text-14px: 14px;
+  --text-16px: 16px;
+  --text-20px: 20px;
+
+  --font-weight-500: 500;
+  --font-weight-400: 400;
+  --font-weight-600: 600;
+  --font-weight-700: 700;
+
+  --radius-8px: 8px;
 }

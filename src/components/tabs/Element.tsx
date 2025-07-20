@@ -1,16 +1,12 @@
 import React from "react";
-import { SearchOutlined } from "@ant-design/icons";
-import { Input } from "antd";
 import { events, gateways, tasks } from "../../constants/flow";
 import CardItem from "./CardItem";
+import SearchInput from "../common/SearchInput";
 
 const Element: React.FC = () => {
   return (
     <div className="space-y-4">
-      <Input
-        placeholder="Tìm kiếm"
-        prefix={<SearchOutlined style={{ color: "gray" }} />}
-      />
+      <SearchInput />
       <div>
         <h1 className="text-[16px] font-medium text-gray-700 my-4">Tasks</h1>
         {tasks.map((task) => (
