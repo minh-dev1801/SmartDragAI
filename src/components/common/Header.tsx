@@ -5,6 +5,7 @@ import { FaTh } from "react-icons/fa";
 import NotificationBell from "./NotificationBell";
 import PopoverCus from "./PopoverCus";
 import MenuHeader from "../contents/MenuHeader";
+import AvatarHeader from "../contents/AvatarHeader";
 
 const Header: React.FC = () => {
   return (
@@ -56,11 +57,13 @@ const Header: React.FC = () => {
           </PopoverCus>
         </div>
 
-        <PopoverCus content={<MenuHeader />}>
-          <Avatar style={{ backgroundColor: "#fde3cf", color: "#f56a00" }}>
-            M
-          </Avatar>
-        </PopoverCus>
+        <div className="mr-10">
+          <PopoverCus content={<AvatarHeader />}>
+            <Avatar style={{ backgroundColor: "#fde3cf", color: "#f56a00" }}>
+              M
+            </Avatar>
+          </PopoverCus>
+        </div>
       </div>
     </div>
   );

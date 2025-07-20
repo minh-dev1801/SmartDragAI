@@ -1,15 +1,16 @@
 @utility container-auto {
   @apply container mx-auto;
 }
-
 @utility bg-linear-blue {
   background: linear-gradient(270deg, #0d57c6 0%, #37cfff 50.39%, #0f5ed6 100%);
 }
-
 @utility bg-linear-orange {
   background: linear-gradient(135deg, #ffd666 0%, #ffab00 100%);
 }
-
 @utility flex-row-center {
-  @apply flex items-center;
+  @apply flex items-center gap-2;
 }
+@utility hover-bg-gray {
+  @apply px-3 py-[6px] hover:bg-gray-100 rounded-md transition-all;
+}
+

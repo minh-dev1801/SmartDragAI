@@ -20,6 +20,7 @@ const PopoverCus = ({
       trigger="click"
       open={open}
       onOpenChange={handleOpenChange}
+      placement="bottomRight"
       className="cursor-pointer"
     >
       {children}

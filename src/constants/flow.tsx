@@ -1,4 +1,4 @@
-import CustomNode from "../components/Flow/CustomNode";
+import CustomNode from "../components/flow/CustomNode";
 import ComputerIcon from "../components/icons/ComputerIcon";
 
 export const nodeTypes = {
