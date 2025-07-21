@@ -1,4 +1,4 @@
-import { features } from "../../constants/header";
+import { features } from "../../constants/data";
 import Image from "../common/Image";
 import SearchInput from "../common/SearchInput";
 

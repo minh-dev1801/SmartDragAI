@@ -1,9 +1,14 @@
 import React from "react";
-import { Tabs } from "antd";
+import { Breadcrumb, Tabs } from "antd";
 import { tabItems } from "../constants/menu";
 import DnDFlow from "../components/flow/DnDFlow";
 import Sidebar from "../components/common/Sidebar";
 import Header from "../components/common/Header";
+import { breadcrumb } from "../constants/data";
+import { GoInfo } from "react-icons/go";
+import PopoverCus from "../components/common/PopoverCus";
+import Infor from "../components/contents/Infor";
+import { antTabsContentStyles } from "../constants/styles";
 
 export const Layout: React.FC = () => {
   return (
@@ -12,9 +17,18 @@ export const Layout: React.FC = () => {
       <div className="flex flex-col flex-grow">
         <Header />
         <div className="border-b border-b-gray-200 absolute w-full h-10 top-[37px] -z-[1] right-0"></div>
-        <div className="flex gap-4 mt-4">
-          <div className="w-1/4 h-full overflow-y-auto py-2 px-4 border border-gray-300 rounded-lg">
-            <Tabs items={tabItems} />
+        <div className="mt-3">
+          <Breadcrumb items={breadcrumb} />
+        </div>
+        <div className="mt-4 flex-row-center gap-1">
+          <h1 className="text-xl font-600 text-gray-700">Tạo quy trình</h1>
+          <PopoverCus content={<Infor />}>
+            <GoInfo className="text-gray-400 cursor-pointer text-[13px]" />
+          </PopoverCus>
+        </div>
+        <div className="flex gap-4 mt-4 h-[calc(100vh-190px)]">
+          <div className="w-1/4 py-2 pl-4 pr-2 border border-gray-300 rounded-lg relative">
+            <Tabs items={tabItems} className={antTabsContentStyles} />
           </div>
           <div className="flex-1 py-2 px-4 border border-gray-300 rounded-lg mr-4">
             <DnDFlow />

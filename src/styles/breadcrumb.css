@@ -1,0 +1,4 @@
+.ant-breadcrumb-link {
+  background: inherit !important;
+  @apply hover:!text-blue-500 hover:underline !transition-all;
+}

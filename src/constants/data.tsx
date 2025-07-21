@@ -24,3 +24,14 @@ export const features = [
     name: "Settings",
   },
 ];
+
+export const breadcrumb = [
+  {
+    path: "/index",
+    title: "Quản lý quy trình",
+  },
+  {
+    path: "/index",
+    title: <span className="font-semibold text-gray-700">Tạo quy trình</span>,
+  },
+];

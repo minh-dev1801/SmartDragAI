@@ -1,5 +1,5 @@
 import { Avatar, Button } from "antd";
-import { features } from "../../constants/header";
+import { features } from "../../constants/data";
 import Image from "./Image";
 import { FaTh } from "react-icons/fa";
 import NotificationBell from "./NotificationBell";
