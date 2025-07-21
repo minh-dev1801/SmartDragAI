@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useEffect, useState } from "react";
 import {
   ReactFlow,
   addEdge,
@@ -7,24 +7,53 @@ import {
   useNodesState,
   Background,
   useReactFlow,
-  Controls,
   MiniMap,
   type OnConnect,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { initialEdges, initialNodes, nodeTypes } from "../../constants/flow";
 import { useDnD } from "../../hooks/useDnD";
+import CustomControls from "./CustomControls";
 
 function DnDFlow() {
+  const [isLocked, setIsLocked] = useState<boolean>(false);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const { screenToFlowPosition } = useReactFlow();
   const [type] = useDnD();
 
-  const idRef = useRef(0);
+  const idRef = useRef(3);
+
   const getId = useCallback(() => `dndnode_${idRef.current++}`, []);
 
-  const panOnDrag = [2];
+  const reactFlowWrapper = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (reactFlowWrapper.current) {
+      const { height } = reactFlowWrapper.current.getBoundingClientRect();
+      const centerX = 150;
+      const centerY = height / 2;
+
+      const nodeSpacing = 100;
+
+      setNodes((nds) =>
+        nds.map((node, index) => {
+          if (index === 0) {
+            return {
+              ...node,
+              position: { x: centerX - nodeSpacing, y: centerY },
+            };
+          } else if (index === 1) {
+            return {
+              ...node,
+              position: { x: centerX + nodeSpacing, y: centerY },
+            };
+          }
+          return node;
+        })
+      );
+    }
+  }, [setNodes]);
 
   const onConnect: OnConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -70,6 +99,7 @@ function DnDFlow() {
 
   return (
     <ReactFlow
+      ref={reactFlowWrapper}
       nodes={nodes}
       edges={edges}
       nodeTypes={nodeTypes}
@@ -80,12 +110,12 @@ function DnDFlow() {
       onDragOver={onDragOver}
       panOnScroll
       selectionOnDrag
-      panOnDrag={panOnDrag}
+      panOnDrag={!isLocked}
       selectionMode={SelectionMode.Partial}
-      fitView
+      fitViewOptions={{ maxZoom: 1, minZoom: 1 }}
     >
       <Background />
-      <Controls />
+      <CustomControls isLocked={isLocked} setIsLocked={setIsLocked} />
       <MiniMap />
     </ReactFlow>
   );

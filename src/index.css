@@ -17,3 +17,10 @@
   --radius-8px: 8px;
 }
 
+.react-flow__panel.react-flow__attribution.bottom.right {
+  display: none;
+}
+
+button {
+  cursor: pointer;
+}

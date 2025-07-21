@@ -29,23 +29,28 @@ export const gateways = [
 
 export const initialNodes = [
   {
-    id: "1",
+    id: "dndnode_1",
     type: "custom",
     data: {
       image: "/plug-and-play.png",
       icon: <ComputerIcon />,
       name: "Start",
     },
-    position: { x: -150, y: 150 },
+    position: { x: 0, y: 0 },
   },
   {
-    id: "2",
+    id: "dndnode_2",
     type: "custom",
     data: { image: "/project-management.png", icon: null, name: "Root" },
-    position: { x: 100, y: 150 },
+    position: { x: 0, y: 0 },
   },
 ];
 
 export const initialEdges = [
-  { id: "n1-n2", source: "1", target: "2", type: "step" },
+  {
+    id: "dndnode_1-dndnode_2",
+    source: "dndnode_1",
+    target: "dndnode_2",
+    type: "step",
+  },
 ];
