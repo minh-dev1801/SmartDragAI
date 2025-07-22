@@ -1,12 +1,7 @@
 import { Handle, Position } from "@xyflow/react";
-import React, { memo } from "react";
+import { memo } from "react";
 import Image from "../common/Image";
-
-export interface CustomNodeData {
-  image: string;
-  name: string;
-  icon: null | React.ReactNode;
-}
+import type { CustomNodeData } from "../../types/CustomNodeData";
 
 const CustomNode = ({ data }: { data: CustomNodeData }) => {
   return (
