@@ -9,23 +9,31 @@ import {
   useReactFlow,
   MiniMap,
   type OnConnect,
+  MarkerType,
+  type Connection,
+  type Edge,
+  type Node,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { initialEdges, initialNodes, nodeTypes } from "../../constants/flow";
+import {
+  connectionLineStyle,
+  initialEdges,
+  initialNodes,
+  nodeTypes,
+} from "../../constants/flow";
 import { useDnD } from "../../hooks/useDnD";
 import CustomControls from "./CustomControls";
+import ArrowFlow from "../icons/ArrowFlow";
 
 function DnDFlow() {
   const [isLocked, setIsLocked] = useState<boolean>(false);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initialEdges);
   const { screenToFlowPosition } = useReactFlow();
   const [type] = useDnD();
 
   const idRef = useRef(3);
-
   const getId = useCallback(() => `dndnode_${idRef.current++}`, []);
-
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -56,7 +64,17 @@ function DnDFlow() {
   }, [setNodes]);
 
   const onConnect: OnConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
+    (params: Connection) => {
+      const edgeWithArrow = {
+        ...params,
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          width: 20,
+          height: 20,
+        },
+      };
+      setEdges((eds) => addEdge(edgeWithArrow, eds));
+    },
     [setEdges]
   );
 
@@ -108,12 +126,14 @@ function DnDFlow() {
       onConnect={onConnect}
       onDrop={onDrop}
       onDragOver={onDragOver}
+      connectionLineStyle={connectionLineStyle}
       panOnScroll
       selectionOnDrag
       panOnDrag={!isLocked}
       selectionMode={SelectionMode.Partial}
       fitViewOptions={{ maxZoom: 1, minZoom: 1 }}
     >
+      <ArrowFlow />
       <Background />
       <CustomControls isLocked={isLocked} setIsLocked={setIsLocked} />
       <MiniMap />

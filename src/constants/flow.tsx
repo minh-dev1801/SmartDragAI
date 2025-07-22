@@ -1,3 +1,4 @@
+import { MarkerType } from "@xyflow/react";
 import CustomNode from "../components/flow/CustomNode";
 import ComputerIcon from "../components/icons/ComputerIcon";
 
@@ -27,6 +28,12 @@ export const gateways = [
   { name: "Parallel gateway", image: "/project-management.png", icon: null },
 ];
 
+export const connectionLineStyle = {
+  stroke: "#3b82f6",
+  strokeWidth: 2,
+  markerEnd: "url(#connection-marker)",
+};
+
 export const initialNodes = [
   {
     id: "dndnode_1",
@@ -52,5 +59,10 @@ export const initialEdges = [
     source: "dndnode_1",
     target: "dndnode_2",
     type: "step",
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      width: 20,
+      height: 20,
+    },
   },
 ];

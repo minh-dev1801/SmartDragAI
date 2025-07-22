@@ -1,13 +1,19 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./index.css";
-import App from "./App.tsx";
+import AllRoutes from "./Routes/AllRoutes";
+import { ReactFlowProvider } from "@xyflow/react";
+import { DnDProvider } from "./provider/DnDContext";
 import { BrowserRouter } from "react-router";
+import "./styles/index.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <ReactFlowProvider>
+        <DnDProvider>
+          <AllRoutes />
+        </DnDProvider>
+      </ReactFlowProvider>
     </BrowserRouter>
   </StrictMode>
 );

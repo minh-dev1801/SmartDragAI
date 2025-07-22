@@ -20,10 +20,14 @@ export const Layout: React.FC = () => {
         <div className="mt-3">
           <Breadcrumb items={breadcrumb} />
         </div>
-        <div className="mt-4 flex-row-center gap-1">
+        <div className="mt-4 flex-row-center gap-2">
           <h1 className="text-xl font-600 text-gray-700">Tạo quy trình</h1>
-          <PopoverCus content={<Infor />}>
-            <GoInfo className="text-gray-400 cursor-pointer text-[13px]" />
+          <PopoverCus
+            content={<Infor />}
+            placement="bottomLeft"
+            popoverStyles={{ inset: "162px auto auto 355px !important" }}
+          >
+            <GoInfo className="text-gray-400 cursor-pointer mt-1" size={16} />
           </PopoverCus>
         </div>
         <div className="flex gap-4 mt-4 h-[calc(100vh-190px)]">

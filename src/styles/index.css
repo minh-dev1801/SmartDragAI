@@ -1,7 +1,6 @@
 @import "tailwindcss";
-@import "./styles/utilities";
-@import "./styles/popover";
-@import "./styles/breadcrumb";
+@import "./utilities";
+@import "./breadcrumb";
 
 @theme {
   --text-12px: 12px;

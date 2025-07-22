@@ -36,29 +36,31 @@ const Header: React.FC = () => {
             </div>
           ))}
         </div>
-
         <div>
           <p className="text-gray-700 mr-1">
             Còn <span className="text-black">12 ngày</span> dùng thử
           </p>
         </div>
-
         <Button color="blue" variant="outlined">
           Nâng cấp
         </Button>
-
         <div className="mx-4">
           <NotificationBell />
         </div>
-
         <div className="mr-4">
-          <PopoverCus content={<MenuHeader />}>
+          <PopoverCus
+            content={<MenuHeader />}
+            popoverStyles={{ inset: "59px 101px auto auto !important" }}
+          >
             <FaTh className="text-[19px]" />
           </PopoverCus>
         </div>
 
         <div className="mr-10">
-          <PopoverCus content={<AvatarHeader />}>
+          <PopoverCus
+            content={<AvatarHeader />}
+            popoverStyles={{ inset: "66px 49px auto auto !important" }}
+          >
             <Avatar style={{ backgroundColor: "#fde3cf", color: "#f56a00" }}>
               M
             </Avatar>

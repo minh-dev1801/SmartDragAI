@@ -1,18 +1,35 @@
-import { useState, type ReactNode } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 import { Popover } from "antd";
+import type { TooltipPlacement } from "antd/es/tooltip";
+import { css } from "@emotion/css";
+
+interface PopoverCusProps {
+  children: ReactNode;
+  content: ReactNode;
+  placement?: TooltipPlacement;
+  className?: string;
+  arrowStyles?: CSSProperties;
+  popoverStyles?: CSSProperties;
+}
 
 const PopoverCus = ({
   children,
   content,
-}: {
-  children: ReactNode;
-  content: ReactNode;
-}) => {
+  placement = "bottomRight",
+  className = "",
+  arrowStyles = {},
+  popoverStyles = {},
+}: PopoverCusProps) => {
   const [open, setOpen] = useState(false);
 
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
   };
+
+  const popoverArrowStyle = css({
+    "& .ant-popover-arrow": { ...arrowStyles },
+    "&": { ...popoverStyles },
+  });
 
   return (
     <Popover
@@ -20,8 +37,9 @@ const PopoverCus = ({
       trigger="click"
       open={open}
       onOpenChange={handleOpenChange}
-      placement="bottomRight"
-      className="cursor-pointer"
+      placement={placement}
+      className={`cursor-pointer ${className}`}
+      rootClassName={popoverArrowStyle}
     >
       {children}
     </Popover>
