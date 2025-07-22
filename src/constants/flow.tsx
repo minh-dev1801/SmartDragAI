@@ -1,5 +1,5 @@
 import { MarkerType } from "@xyflow/react";
-import CustomNode from "../components/flow/CustomNode";
+import CustomNode from "../components/flow/CustomNode.tsx";
 import ComputerIcon from "../components/icons/ComputerIcon";
 
 export const nodeTypes = {

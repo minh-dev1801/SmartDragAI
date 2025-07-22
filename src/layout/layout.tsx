@@ -8,7 +8,7 @@ import { GoInfo } from "react-icons/go";
 import PopoverCus from "../components/common/PopoverCus";
 import Infor from "../components/contents/Infor";
 import { antTabsContentStyles } from "../constants/styles";
-import DnDFlow from "../components/flow/DnDFlow";
+import DnDFlow from "../components/flow/DnDFlow.tsx";
 
 export const Layout: React.FC = () => {
   return (
