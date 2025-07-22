@@ -1,7 +1,6 @@
 import React from "react";
 import { Breadcrumb, Tabs } from "antd";
 import { tabItems } from "../constants/menu";
-import DnDFlow from "../components/flow/DnDFlow";
 import Sidebar from "../components/common/Sidebar";
 import Header from "../components/common/Header";
 import { breadcrumb } from "../constants/data";
@@ -9,6 +8,7 @@ import { GoInfo } from "react-icons/go";
 import PopoverCus from "../components/common/PopoverCus";
 import Infor from "../components/contents/Infor";
 import { antTabsContentStyles } from "../constants/styles";
+import DnDFlow from "../components/flow/DnDFlow";
 
 export const Layout: React.FC = () => {
   return (

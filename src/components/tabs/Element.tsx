@@ -3,8 +3,8 @@ import React, { useEffect, useRef } from "react";
 import { events, gateways, tasks } from "../../constants/flow";
 import CardItem from "./CardItem";
 import SearchInput from "../common/SearchInput";
-import { OverlayScrollbars } from "OverlayScrollbars";
 import { overlayScrollbarStyles } from "../../constants/styles";
+import { OverlayScrollbars } from "overlayscrollbars";
 
 const Element: React.FC = () => {
   const tabsRef = useRef<HTMLDivElement>(null);

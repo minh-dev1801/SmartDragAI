@@ -24,11 +24,23 @@ import {
 import { useDnD } from "../../hooks/useDnD";
 import CustomControls from "./CustomControls";
 import ArrowFlow from "../icons/ArrowFlow";
+import { Button, Drawer, Form, Input } from "antd";
+import { Controller, useForm } from "react-hook-form";
+
+type FieldType = {
+  email?: string;
+  password?: string;
+};
 
 function DnDFlow() {
   const [isLocked, setIsLocked] = useState<boolean>(false);
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initialEdges);
+
+  const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
+
+  const { handleSubmit, control } = useForm<FieldType>();
+
   const { screenToFlowPosition } = useReactFlow();
   const [type] = useDnD();
 
@@ -62,6 +74,10 @@ function DnDFlow() {
       );
     }
   }, [setNodes]);
+
+  const onSubmit = handleSubmit((data: FieldType) => {
+    console.log({ data });
+  });
 
   const onConnect: OnConnect = useCallback(
     (params: Connection) => {
@@ -111,33 +127,70 @@ function DnDFlow() {
       };
 
       setNodes((nds) => nds.concat(newNode));
+
+      setDrawerVisible(true);
     },
     [screenToFlowPosition, type, setNodes, getId]
   );
 
+  const handleDrawerClose = () => {
+    setDrawerVisible(false);
+  };
+
   return (
-    <ReactFlow
-      ref={reactFlowWrapper}
-      nodes={nodes}
-      edges={edges}
-      nodeTypes={nodeTypes}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      onDrop={onDrop}
-      onDragOver={onDragOver}
-      connectionLineStyle={connectionLineStyle}
-      panOnScroll
-      selectionOnDrag
-      panOnDrag={!isLocked}
-      selectionMode={SelectionMode.Partial}
-      fitViewOptions={{ maxZoom: 1, minZoom: 1 }}
-    >
-      <ArrowFlow />
-      <Background />
-      <CustomControls isLocked={isLocked} setIsLocked={setIsLocked} />
-      <MiniMap />
-    </ReactFlow>
+    <>
+      <ReactFlow
+        ref={reactFlowWrapper}
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
+        connectionLineStyle={connectionLineStyle}
+        panOnScroll
+        selectionOnDrag
+        panOnDrag={!isLocked}
+        selectionMode={SelectionMode.Partial}
+        fitViewOptions={{ maxZoom: 1, minZoom: 1 }}
+      >
+        <ArrowFlow />
+        <Background />
+        <CustomControls isLocked={isLocked} setIsLocked={setIsLocked} />
+        <MiniMap />
+      </ReactFlow>
+
+      <Drawer
+        title="Basic Drawer"
+        onClose={handleDrawerClose}
+        open={drawerVisible}
+        size="large"
+      >
+        <Form onFinish={onSubmit} layout="vertical">
+          <Form.Item label="Email">
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => <Input {...field} />}
+            />
+          </Form.Item>
+          <Form.Item label="Mật khẩu">
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => <Input.Password {...field} />}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Đăng nhập
+            </Button>
+          </Form.Item>
+        </Form>
+      </Drawer>
+    </>
   );
 }
 
