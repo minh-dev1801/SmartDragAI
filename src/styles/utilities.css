@@ -13,4 +13,3 @@
 @utility hover-bg-gray {
   @apply px-3 py-[6px] hover:bg-gray-100 rounded-md transition-all;
 }
-

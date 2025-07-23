@@ -1,5 +1,5 @@
 import { type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
-import { Drawer } from "antd";
+import { Drawer, Empty } from "antd";
 
 interface DrawerCustomProps {
   children: ReactNode;
@@ -16,7 +16,7 @@ const DrawerCustom = ({
 }: DrawerCustomProps) => {
   return (
     <Drawer title={title} onClose={onClose} open={open} size="large">
-      {children}
+      {children ? children : <Empty />}
     </Drawer>
   );
 };

@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "./utilities";
 @import "./breadcrumb";
+@import "./global";
 
 @theme {
   --text-12px: 12px;
@@ -14,12 +15,4 @@
   --font-weight-700: 700;
 
   --radius-8px: 8px;
-}
-
-.react-flow__panel.react-flow__attribution.bottom.right {
-  display: none;
-}
-
-button {
-  cursor: pointer;
 }

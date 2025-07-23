@@ -1,4 +1,10 @@
-import React, { useCallback, useRef, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useRef,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
 import {
   ReactFlow,
   addEdge,
@@ -13,6 +19,7 @@ import {
   type Connection,
   type Edge,
   type Node,
+  type NodeChange,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import {
@@ -24,22 +31,20 @@ import {
 import { useDnD } from "../../hooks/useDnD";
 import CustomControls from "./CustomControls";
 import ArrowFlow from "../icons/ArrowFlow";
-import { Button, Drawer, Form, Input } from "antd";
-import { Controller, useForm } from "react-hook-form";
 
-type FieldType = {
-  email?: string;
-  password?: string;
-};
+import DrawerCustom from "../common/drawer/DrawerCustom";
+import HeaderDrawer from "../common/drawer/HeaderDrawer";
+import Image from "../common/Image";
+import { handleContentDrawer } from "../../helpers/handleContentDrawer";
 
 function DnDFlow() {
   const [isLocked, setIsLocked] = useState<boolean>(false);
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initialEdges);
 
-  const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
+  const [selectedNode, setSelectedNode] = useState<Node>();
 
-  const { handleSubmit, control } = useForm<FieldType>();
+  const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
 
   const { screenToFlowPosition } = useReactFlow();
   const [type] = useDnD();
@@ -75,9 +80,24 @@ function DnDFlow() {
     }
   }, [setNodes]);
 
-  const onSubmit = handleSubmit((data: FieldType) => {
-    console.log({ data });
-  });
+  const contentDrawer = useMemo(() => {
+    // return handleContentDrawer((selectedNode?.data.name as string) || "");
+   return handleContentDrawer("123");
+  }, [selectedNode]);
+
+  const handleNodeChange = useCallback(
+    (changes: NodeChange[]) => {
+      onNodesChange(changes);
+      const removeNodeIds = changes
+        .filter((node) => node.type === "remove")
+        .map((node) => node.id);
+      if (selectedNode && removeNodeIds.includes(selectedNode.id)) {
+        setSelectedNode(undefined);
+        setDrawerVisible(false);
+      }
+    },
+    [onNodesChange, selectedNode]
+  );
 
   const onConnect: OnConnect = useCallback(
     (params: Connection) => {
@@ -127,7 +147,7 @@ function DnDFlow() {
       };
 
       setNodes((nds) => nds.concat(newNode));
-
+      setSelectedNode(newNode);
       setDrawerVisible(true);
     },
     [screenToFlowPosition, type, setNodes, getId]
@@ -144,7 +164,7 @@ function DnDFlow() {
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
-        onNodesChange={onNodesChange}
+        onNodesChange={handleNodeChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onDrop={onDrop}
@@ -161,35 +181,28 @@ function DnDFlow() {
         <CustomControls isLocked={isLocked} setIsLocked={setIsLocked} />
         <MiniMap />
       </ReactFlow>
-
-      <Drawer
-        title="Basic Drawer"
-        onClose={handleDrawerClose}
-        open={drawerVisible}
-        size="large"
-      >
-        <Form onFinish={onSubmit} layout="vertical">
-          <Form.Item label="Email">
-            <Controller
-              name="email"
-              control={control}
-              render={({ field }) => <Input {...field} />}
+      {selectedNode && (
+        <DrawerCustom
+          title={
+            <HeaderDrawer
+              icon={
+                <Image
+                  src={selectedNode.data.image as string}
+                  alt={selectedNode.data.name as string}
+                  width={40}
+                  height={40}
+                  className="bg-blue-500 p-1 rounded-sm"
+                />
+              }
+              text={selectedNode.data.name as string}
             />
-          </Form.Item>
-          <Form.Item label="Mật khẩu">
-            <Controller
-              name="password"
-              control={control}
-              render={({ field }) => <Input.Password {...field} />}
-            />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Đăng nhập
-            </Button>
-          </Form.Item>
-        </Form>
-      </Drawer>
+          }
+          open={drawerVisible}
+          onClose={handleDrawerClose}
+        >
+          {contentDrawer}
+        </DrawerCustom>
+      )}
     </>
   );
 }
