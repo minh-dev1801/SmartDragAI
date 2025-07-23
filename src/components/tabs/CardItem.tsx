@@ -24,7 +24,7 @@ const CardItem = ({ nodeConfig }: { nodeConfig: NodeConfigType }) => {
     <div
       draggable
       onDragStart={onDragStart}
-      className="p-2.5 my-1.5 bg-gray-200 cursor-pointer flex items-center gap-3"
+      className="p-2.5 my-1.5 hover:bg-gray-100 cursor-pointer flex items-center gap-3"
     >
       <Image
         src={nodeConfig.image}

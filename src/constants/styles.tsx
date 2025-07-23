@@ -3,7 +3,7 @@ import { css } from "@emotion/css";
 export const antTabsContentStyles = css`
   .ant-tabs-content.ant-tabs-content-top {
     height: calc(100vh - 280px);
-    padding-right: 30px;
+    padding-right: 12px;
   }
 `;
 
