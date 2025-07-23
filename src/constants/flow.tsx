@@ -7,37 +7,49 @@ export const nodeTypes = {
 };
 
 export const tasks = [
-  { name: "User Task", image: "/nodes/project-management.png", icon: null },
-  { name: "Send Email", image: "/nodes/send-email.png", icon: null },
+  { name: "User Task", image: "/nodes/user-task.svg", icon: null },
+  { name: "Send Email", image: "/nodes/email-task.svg", icon: null },
   {
     name: "Send HTTP Request",
-    image: "/nodes/send-http-request.png",
+    image: "/nodes/http-request-task.svg",
     icon: null,
   },
-  { name: "Organization", image: "/nodes/organization.png", icon: null },
+  { name: "Organization", image: "/nodes/organization-task.svg", icon: null },
   {
     name: "Send Notification",
-    image: "/nodes/send-notification.png",
+    image: "/nodes/notification-task.svg",
     icon: null,
   },
   {
     name: "Create or Update Record",
-    image: "/nodes/create-or-update-record.png",
+    image: "/nodes/record-task.svg",
     icon: null,
   },
-  { name: "Get Record", image: "/nodes/get-record.png", icon: null },
-  { name: "Loop", image: "/nodes/loop.png", icon: null },
-];
-
-export const events = [
-  { name: "Wait", image: "/project-management.png", icon: null },
-  { name: "End", image: "/project-management.png", icon: null },
+  { name: "Get Record", image: "/nodes/get-record-task.svg", icon: null },
+  { name: "Loop", image: "/nodes/loop-task.svg", icon: null },
 ];
 
 export const gateways = [
-  { name: "Exclusive gateway", image: "/project-management.png", icon: null },
-  { name: "Inclusive gateway", image: "/project-management.png", icon: null },
-  { name: "Parallel gateway", image: "/project-management.png", icon: null },
+  {
+    name: "Exclusive gateway",
+    image: "/nodes/exclusive-gateway.svg",
+    icon: null,
+  },
+  {
+    name: "Inclusive gateway",
+    image: "/nodes/inclusive-gateway.svg",
+    icon: null,
+  },
+  {
+    name: "Parallel gateway",
+    image: "/nodes/parallel-gateway.svg",
+    icon: null,
+  },
+];
+
+export const events = [
+  { name: "Wait", image: "/nodes/wait-task.svg", icon: null },
+  { name: "End", image: "/nodes/end-event.svg", icon: null },
 ];
 
 export const connectionLineStyle = {
@@ -51,7 +63,7 @@ export const initialNodes = [
     id: "dndnode_1",
     type: "custom",
     data: {
-      image: "/plug-and-play.png",
+      image: "/nodes/start-manual-event.svg",
       icon: <ComputerIcon />,
       name: "Start",
     },
@@ -60,7 +72,7 @@ export const initialNodes = [
   {
     id: "dndnode_2",
     type: "custom",
-    data: { image: "/project-management.png", icon: null, name: "Root" },
+    data: { image: "/nodes/user-task.svg", icon: null, name: "Root" },
     position: { x: 0, y: 0 },
   },
 ];

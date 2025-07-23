@@ -81,8 +81,7 @@ function DnDFlow() {
   }, [setNodes]);
 
   const contentDrawer = useMemo(() => {
-    // return handleContentDrawer((selectedNode?.data.name as string) || "");
-    return handleContentDrawer("123");
+    return handleContentDrawer((selectedNode?.data.name as string) || "");
   }, [selectedNode]);
 
   const handleNodeChange = useCallback(

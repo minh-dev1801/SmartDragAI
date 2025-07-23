@@ -24,7 +24,7 @@ const CustomNode = ({ data }: { data: CustomNodeData }) => {
         className="!bg-white !border !border-blue-500 !p-1 !-left-[1px]"
       />
 
-      <Handle
+      {/* <Handle
         type="target"
         position={Position.Left}
         id="left-2"
@@ -59,7 +59,7 @@ const CustomNode = ({ data }: { data: CustomNodeData }) => {
         position={Position.Left}
         id="left-7"
         className="py-1 !top-[95%] opacity-0"
-      />
+      /> */}
 
       <Handle
         type="source"
@@ -68,7 +68,7 @@ const CustomNode = ({ data }: { data: CustomNodeData }) => {
         className="!bg-white !border !border-blue-500 !p-1 !-right-[1px]"
       />
 
-      <Handle
+      {/* <Handle
         type="target"
         position={Position.Top}
         id="top"
@@ -80,7 +80,7 @@ const CustomNode = ({ data }: { data: CustomNodeData }) => {
         position={Position.Bottom}
         id="bottom"
         className="!bg-white !border !border-blue-500 !p-1 !-bottom-[1px]"
-      />
+      /> */}
     </div>
   );
 };
