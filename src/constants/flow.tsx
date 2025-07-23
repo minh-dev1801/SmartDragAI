@@ -7,14 +7,26 @@ export const nodeTypes = {
 };
 
 export const tasks = [
-  { name: "User Task", image: "/project-management.png", icon: null },
-  { name: "Send Email", image: "/project-management.png", icon: null },
-  { name: "Send HTTP Request", image: "/project-management.png", icon: null },
+  { name: "User Task", image: "/nodes/project-management.png", icon: null },
+  { name: "Send Email", image: "/nodes/send-email.png", icon: null },
   {
-    name: "Create or Update Record",
-    image: "/project-management.png",
+    name: "Send HTTP Request",
+    image: "/nodes/send-http-request.png",
     icon: null,
   },
+  { name: "Organization", image: "/nodes/organization.png", icon: null },
+  {
+    name: "Send Notification",
+    image: "/nodes/send-notification.png",
+    icon: null,
+  },
+  {
+    name: "Create or Update Record",
+    image: "/nodes/create-or-update-record.png",
+    icon: null,
+  },
+  { name: "Get Record", image: "/nodes/get-record.png", icon: null },
+  { name: "Loop", image: "/nodes/loop.png", icon: null },
 ];
 
 export const events = [

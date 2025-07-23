@@ -27,7 +27,7 @@ const CardItem = ({ nodeConfig }: { nodeConfig: NodeConfigType }) => {
       className="p-2.5 my-1.5 bg-gray-200 cursor-pointer flex items-center gap-3"
     >
       <Image
-        src="/project-management.png"
+        src={nodeConfig.image}
         alt="User Task icon"
         className="w-10"
       />

@@ -6,6 +6,7 @@ interface DrawerCustomProps {
   open: boolean;
   onClose: (e: MouseEvent | KeyboardEvent) => void;
   title: ReactNode;
+  className: string;
 }
 
 const DrawerCustom = ({
@@ -13,9 +14,16 @@ const DrawerCustom = ({
   open,
   onClose,
   title,
+  className,
 }: DrawerCustomProps) => {
   return (
-    <Drawer title={title} onClose={onClose} open={open} size="large">
+    <Drawer
+      title={title}
+      onClose={onClose}
+      open={open}
+      size="large"
+      className={className}
+    >
       {children ? children : <Empty />}
     </Drawer>
   );

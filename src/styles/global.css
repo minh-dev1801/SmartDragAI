@@ -15,6 +15,15 @@
   display: none;
 }
 
+/* Custom position button close of drawer */
+.custom-close-right-drawer .ant-drawer-header {
+  position: relative;
+}
+.custom-close-right-drawer .ant-drawer-close {
+  position: absolute;
+  right: 16px;
+}
+
 /* CSS Global */
 button {
   cursor: pointer;

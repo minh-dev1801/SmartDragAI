@@ -82,7 +82,7 @@ function DnDFlow() {
 
   const contentDrawer = useMemo(() => {
     // return handleContentDrawer((selectedNode?.data.name as string) || "");
-   return handleContentDrawer("123");
+    return handleContentDrawer("123");
   }, [selectedNode]);
 
   const handleNodeChange = useCallback(
@@ -189,9 +189,8 @@ function DnDFlow() {
                 <Image
                   src={selectedNode.data.image as string}
                   alt={selectedNode.data.name as string}
-                  width={40}
-                  height={40}
-                  className="bg-blue-500 p-1 rounded-sm"
+                  width={70}
+                  className="border border-gray-200 px-4 py-1 rounded-sm shadow-sm"
                 />
               }
               text={selectedNode.data.name as string}
@@ -199,6 +198,7 @@ function DnDFlow() {
           }
           open={drawerVisible}
           onClose={handleDrawerClose}
+          className="custom-close-right-drawer"
         >
           {contentDrawer}
         </DrawerCustom>

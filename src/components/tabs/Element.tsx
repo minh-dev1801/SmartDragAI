@@ -36,22 +36,22 @@ const Element: React.FC = () => {
       <SearchInput />
       <div>
         <h1 className="text-[16px] font-medium text-gray-700 my-4">Tasks</h1>
-        {tasks.map((task) => (
-          <CardItem nodeConfig={task} />
+        {tasks.map((task, index) => (
+          <CardItem key={index} nodeConfig={task} />
         ))}
       </div>
       <div className="border-t-1 border-t-gray-300"></div>
       <div>
         <h1 className="text-[16px] font-medium text-gray-700 my-4">Gateways</h1>
-        {gateways.map((task) => (
-          <CardItem nodeConfig={task} />
+        {gateways.map((task, index) => (
+          <CardItem key={index} nodeConfig={task} />
         ))}
       </div>
       <div className="border-t-1 border-t-gray-300"></div>
       <div>
         <h1 className="text-[16px] font-medium text-gray-700 my-4">Events</h1>
-        {events.map((task) => (
-          <CardItem nodeConfig={task} />
+        {events.map((task, index) => (
+          <CardItem key={index} nodeConfig={task} />
         ))}
       </div>
     </div>

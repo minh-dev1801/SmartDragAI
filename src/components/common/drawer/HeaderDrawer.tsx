@@ -7,9 +7,9 @@ interface HeaderDrawerProps {
 
 const HeaderDrawer = ({ icon, text }: HeaderDrawerProps) => {
   return (
-    <div className="flex-row-center">
+    <div className="flex-row-center gap-2">
       {icon}
-      <p>{text}</p>
+      <p className="text-2xl text-gray-600">{text}</p>
     </div>
   );
 };
