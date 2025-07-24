@@ -28,3 +28,26 @@
 button {
   cursor: pointer;
 }
+/* Custom scroll bar full page */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1890ff;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #40a9ff;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #096dd9;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(24, 144, 255, 0.1);
+  border-radius: 10px;
+}
