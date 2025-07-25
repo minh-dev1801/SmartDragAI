@@ -87,8 +87,8 @@ const FormSendHTTPRequest = () => {
       </Form.Item>
 
       <Form.Item>
-        <Flex>
-          <div>
+        <Flex gap={15}>
+          <div className="flex-2">
             <Typography.Title level={5}>
               Parse response
               <span className="text-red-500">*</span>
@@ -108,7 +108,7 @@ const FormSendHTTPRequest = () => {
             />
           </div>
 
-          <div>
+          <div className="flex-1">
             <Typography.Title level={5}>Timeout (s)</Typography.Title>
             <Controller
               name="timeOut"
@@ -119,13 +119,13 @@ const FormSendHTTPRequest = () => {
                   defaultValue={10}
                   min={0}
                   max={100}
-                  style={{ width: 200 }}
+                  style={{ width: "100%" }}
                 />
               )}
             />
           </div>
 
-          <div>
+          <div className="flex-1">
             <Typography.Title level={5}>Số lần retry</Typography.Title>
             <Controller
               name="soLanRetry"
@@ -136,7 +136,7 @@ const FormSendHTTPRequest = () => {
                   defaultValue={10}
                   min={0}
                   max={100}
-                  style={{ width: 200 }}
+                  style={{ width: "100%" }}
                 />
               )}
             />

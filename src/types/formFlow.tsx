@@ -24,3 +24,10 @@ export interface FieldTypeFormSendHTTPRequest extends CommonFormType {
   choNhanPhanHoi: string;
   tiepTucKhiRequestLoi: string;
 }
+
+export interface FieldTypeFormOrganization extends CommonFormType {
+  kieuDuLieuDauRa: string;
+  luuDuLieuTimDuoc: string;
+  tenTruong: string;
+  tenBien: string;
+}
