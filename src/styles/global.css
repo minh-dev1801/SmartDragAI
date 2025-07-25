@@ -24,10 +24,6 @@
   right: 16px;
 }
 
-/* CSS Global */
-button {
-  cursor: pointer;
-}
 /* Custom scroll bar full page */
 ::-webkit-scrollbar {
   width: 6px;
@@ -50,4 +46,14 @@ button {
 ::-webkit-scrollbar-track {
   background: rgba(24, 144, 255, 0.1);
   border-radius: 10px;
+}
+
+/* Custom width drawer */
+.ant-drawer-content-wrapper {
+  width: 60% !important;
+}
+
+/* CSS Global */
+button {
+  cursor: pointer;
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { Breadcrumb, Tabs } from "antd";
+import { Breadcrumb, Button, Tabs } from "antd";
 import { tabItems } from "../constants/menu";
 import Sidebar from "../components/common/Sidebar";
 import Header from "../components/common/Header";
@@ -20,15 +20,19 @@ export const Layout: React.FC = () => {
         <div className="mt-3">
           <Breadcrumb items={breadcrumb} />
         </div>
-        <div className="mt-4 flex-row-center gap-2">
-          <h1 className="text-xl font-600 text-gray-700">Tạo quy trình</h1>
-          <PopoverCus
-            content={<Infor />}
-            placement="bottomLeft"
-            popoverStyles={{ inset: "162px auto auto 355px !important" }}
-          >
-            <GoInfo className="text-gray-400 cursor-pointer mt-1" size={16} />
-          </PopoverCus>
+        <div className="flex justify-between items-center">
+          <div className="mt-4 flex-row-center gap-2">
+            <h1 className="text-xl font-600 text-gray-700">Tạo quy trình</h1>
+            <PopoverCus
+              content={<Infor />}
+              placement="bottomLeft"
+              popoverStyles={{ inset: "162px auto auto 355px !important" }}
+            >
+              <GoInfo className="text-gray-400 cursor-pointer mt-1" size={16} />
+            </PopoverCus>
+          </div>
+
+          <Button type="primary" className="mr-5">Lưu</Button>
         </div>
         <div className="flex gap-4 mt-4 h-[calc(100vh-190px)]">
           <div className="w-1/4 py-2 pl-4 pr-2 border border-gray-300 rounded-lg relative">

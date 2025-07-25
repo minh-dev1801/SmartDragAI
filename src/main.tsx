@@ -5,6 +5,7 @@ import "./styles/index.css";
 import AllRoutes from "./Routes/AllRoutes";
 import { ReactFlowProvider } from "@xyflow/react";
 import { DnDProvider } from "./provider/DnDContext";
+import "@ant-design/v5-patch-for-react-19";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

@@ -188,8 +188,8 @@ function DnDFlow() {
                 <Image
                   src={selectedNode.data.image as string}
                   alt={selectedNode.data.name as string}
-                  width={70}
-                  className="border border-gray-200 px-4 py-1 rounded-sm shadow-sm"
+                  width={40}
+         
                 />
               }
               text={selectedNode.data.name as string}
