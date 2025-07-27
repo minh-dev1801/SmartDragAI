@@ -1,6 +1,7 @@
 import FormOrganization from "../components/form/flow/FormOrganization";
 import FormSendHTTPRequest from "../components/form/flow/FormSendHTTPRequest";
 import FormSendMail from "../components/form/flow/FormSendMail";
+import FormSendNotification from "../components/form/flow/FormSendNotification";
 import FormUserTask from "../components/form/flow/FormUserTask";
 
 export const handleContentDrawer = (name: string) => {
@@ -20,7 +21,7 @@ export const handleContentDrawer = (name: string) => {
       return <FormOrganization />;
 
     case "send_notification":
-      return <FormSendMail />;
+      return <FormSendNotification />;
 
     case "create_or_update_record":
       return <FormSendMail />;

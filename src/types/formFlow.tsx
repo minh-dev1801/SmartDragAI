@@ -31,3 +31,18 @@ export interface FieldTypeFormOrganization extends CommonFormType {
   tenTruong: string;
   tenBien: string;
 }
+
+export interface FieldTypeFormSendNotification extends CommonFormType {
+  loaiThongBao: string[];
+  loaiNguoiGui: string;
+  nguoiGui: string;
+  nguoiNhan: string;
+  loaiBoNguoi: string;
+  kieuThongBao: string;
+  tieuDeThongBao: string;
+  loaiVanBan: string;
+  noiDungThongBao: string;
+  noiDungVanBan: string;
+  kieuDinhHuong: string;
+  trangChiTietDieuHuong: string;
+}
