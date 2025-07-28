@@ -46,3 +46,16 @@ export interface FieldTypeFormSendNotification extends CommonFormType {
   kieuDinhHuong: string;
   trangChiTietDieuHuong: string;
 }
+
+export interface FieldTypeFormRecord extends CommonFormType {
+  doiTuong: string;
+  loaiQuyTrinh: string;
+  cachThietLapGiaTriChoTruongCuaBanGhi: string;
+  bienLuuBanGhi: string;
+  xuLyBanGhiTrungLap: boolean;
+}
+
+export interface FieldTypeFormGetRecord extends CommonFormType {
+  doiTuong: string;
+  bienLuuBanGhi: string;
+}

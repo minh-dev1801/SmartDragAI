@@ -1,3 +1,5 @@
+import FormCreateOrUpdateRecord from "../components/form/flow/form_record/FormMain";
+import FormGetRecord from "../components/form/flow/FormGetRecord";
 import FormOrganization from "../components/form/flow/FormOrganization";
 import FormSendHTTPRequest from "../components/form/flow/FormSendHTTPRequest";
 import FormSendMail from "../components/form/flow/FormSendMail";
@@ -24,10 +26,10 @@ export const handleContentDrawer = (name: string) => {
       return <FormSendNotification />;
 
     case "create_or_update_record":
-      return <FormSendMail />;
+      return <FormCreateOrUpdateRecord />;
 
     case "get_record":
-      return <FormSendMail />;
+      return <FormGetRecord />;
 
     case "loop":
       return <FormSendMail />;

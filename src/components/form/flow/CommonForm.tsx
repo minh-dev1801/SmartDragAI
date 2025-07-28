@@ -17,7 +17,7 @@ const CommonForm = ({ control }: BasicInfoFieldsProps) => {
         <Controller
           name="name"
           control={control}
-          render={({ field }) => <Input {...field} />}
+          render={({ field }) => <Input {...field} placeholder="Nhập tên" />}
         />
       </Form.Item>
       <Form.Item>
@@ -28,7 +28,7 @@ const CommonForm = ({ control }: BasicInfoFieldsProps) => {
         <Controller
           name="slug"
           control={control}
-          render={({ field }) => <Input.Password {...field} />}
+          render={({ field }) => <Input {...field} placeholder="Nhập slug" />}
         />
       </Form.Item>
       <Form.Item>
@@ -36,7 +36,9 @@ const CommonForm = ({ control }: BasicInfoFieldsProps) => {
         <Controller
           name="description"
           control={control}
-          render={({ field }) => <Input.TextArea {...field} />}
+          render={({ field }) => (
+            <Input.TextArea {...field} placeholder="Nhập mô tả hành động" />
+          )}
         />
       </Form.Item>
       <Divider />

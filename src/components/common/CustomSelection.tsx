@@ -22,6 +22,7 @@ const CustomSelect = ({
   className,
   placeholder,
 }: CustomSelectProps) => {
+  console.log({ placeholder });
   return (
     <Select
       value={value}
