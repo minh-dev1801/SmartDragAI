@@ -29,7 +29,7 @@ const CardItem = ({ nodeConfig }: { nodeConfig: NodeConfigType }) => {
       <Image
         src={nodeConfig.image}
         alt="User Task icon"
-        className="w-10"
+        className="w-10 h-10"
       />
       {nodeConfig.name}
     </div>

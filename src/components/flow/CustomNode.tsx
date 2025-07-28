@@ -6,11 +6,11 @@ import type { CustomNodeData } from "../../types/CustomNodeData";
 const CustomNode = ({ data }: { data: CustomNodeData }) => {
   return (
     <div className="relative flex flex-col items-center bg-white border-[3px] border-blue-500 rounded-xl shadow-lg py-1 px-[28px]">
-      <div className="w-[50px] h-[50px] relative flex-row-center">
-        <Image src={data.image} alt={data.name} />
-        {data.icon && (
+      <div className="relative">
+        <Image src={data.image} alt={data.name} className="w-10 h-10" />
+        {/* {data.icon && (
           <div className="absolute bottom-0 right-0">{data.icon}</div>
-        )}
+        )} */}
       </div>
 
       <div className="text-center text-sm text-gray-800">
