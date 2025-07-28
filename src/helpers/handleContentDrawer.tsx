@@ -1,10 +1,11 @@
 import FormCreateOrUpdateRecord from "../components/form/flow/form_record/FormMain";
-import FormGetRecord from "../components/form/flow/FormGetRecord";
+import FormGetRecord from "../components/form/flow/form_record/FormGetRecord";
 import FormOrganization from "../components/form/flow/FormOrganization";
 import FormSendHTTPRequest from "../components/form/flow/FormSendHTTPRequest";
 import FormSendMail from "../components/form/flow/FormSendMail";
 import FormSendNotification from "../components/form/flow/FormSendNotification";
 import FormUserTask from "../components/form/flow/FormUserTask";
+import FormLoop from "../components/form/flow/FormLoop";
 
 export const handleContentDrawer = (name: string) => {
   const baseName = name.toLowerCase().trim().replace(/\s/g, "_");
@@ -32,7 +33,7 @@ export const handleContentDrawer = (name: string) => {
       return <FormGetRecord />;
 
     case "loop":
-      return <FormSendMail />;
+      return <FormLoop />;
 
     default:
       return undefined;

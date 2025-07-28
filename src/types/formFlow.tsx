@@ -58,4 +58,10 @@ export interface FieldTypeFormRecord extends CommonFormType {
 export interface FieldTypeFormGetRecord extends CommonFormType {
   doiTuong: string;
   bienLuuBanGhi: string;
+  luuBanGhiTimDuoc: string;
+}
+
+export interface FieldTypeFormLoop extends CommonFormType {
+  danhSachCanLap: string;
+  huongLap: string;
 }

@@ -1,22 +1,24 @@
-import { Button, Form, Input, Typography } from "antd";
+import { Button, Form, Input, Radio, Typography } from "antd";
 import { Controller, useForm } from "react-hook-form";
-import CustomSelect from "../../common/CustomSelection";
+import CustomSelect from "../../../common/CustomSelection";
 
-import CommonForm from "./CommonForm";
+import CommonForm from "../CommonForm";
 import type {
   CommonFormType,
   FieldTypeFormGetRecord,
-} from "../../../types/formFlow";
+} from "../../../../types/formFlow";
 
-import { doiTuongData } from "../../../constants/data/formGetRecord.data";
-import TitleRequire from "../../common/title_require/TitleRequire";
+import { doiTuongData } from "../../../../constants/data/formGetRecord.data";
+import TitleRequire from "../../../common/title_require/TitleRequire";
 import { IoIosArrowForward } from "react-icons/io";
 
 const FormGetRecord = () => {
   const { handleSubmit, control } = useForm<
     FieldTypeFormGetRecord | CommonFormType
   >({
-    defaultValues: {},
+    defaultValues: {
+      luuBanGhiTimDuoc: "chi_ban_ghi_dau_tien",
+    },
   });
 
   const onSubmit = handleSubmit(
@@ -85,6 +87,19 @@ const FormGetRecord = () => {
 
       <Form.Item>
         <TitleRequire text="Lưu bản ghi tìm được" />
+
+        <Controller
+          name="luuBanGhiTimDuoc"
+          control={control}
+          render={({ field }) => (
+            <Radio.Group {...field}>
+              <div className="flex flex-col gap-2">
+                <Radio value="chi_ban_ghi_dau_tien">Chỉ bản ghi đầu tiên</Radio>
+                <Radio value="tat_ca_ban_ghi">Tất cả bản ghi</Radio>
+              </div>
+            </Radio.Group>
+          )}
+        />
       </Form.Item>
 
       <Form.Item>
