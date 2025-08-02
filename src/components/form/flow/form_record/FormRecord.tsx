@@ -8,7 +8,7 @@ import RadioCustom from "../../../common/radio/RadioCustom";
 import FormUpdateRecord from "./FormUpdateRecord";
 import FormCreateRecord from "./FormCreateRecord";
 
-const FormMain = () => {
+const FormRecord = () => {
   const { handleSubmit, control, watch } = useForm<
     FieldTypeFormRecord | CommonFormType
   >({
@@ -57,4 +57,4 @@ const FormMain = () => {
   );
 };
 
-export default FormMain;
+export default FormRecord;

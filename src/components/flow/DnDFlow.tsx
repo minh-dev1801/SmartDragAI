@@ -7,48 +7,50 @@ import React, {
 } from "react";
 import {
   ReactFlow,
-  addEdge,
-  SelectionMode,
-  useEdgesState,
-  useNodesState,
   Background,
   useReactFlow,
   MiniMap,
-  type OnConnect,
-  MarkerType,
-  type Connection,
-  type Edge,
+  SelectionMode,
   type Node,
+  type Edge,
   type NodeChange,
+  type EdgeChange,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import {
-  connectionLineStyle,
-  initialEdges,
-  initialNodes,
-  nodeTypes,
-} from "../../constants/flow";
+import { connectionLineStyle, nodeTypes } from "../../constants/flow";
 import { useDnD } from "../../hooks/useDnD";
+
 import CustomControls from "./CustomControls";
 import ArrowFlow from "../icons/ArrowFlow";
-
 import DrawerCustom from "../common/drawer/DrawerCustom";
 import HeaderDrawer from "../common/drawer/HeaderDrawer";
 import Image from "../common/Image";
 import { handleContentDrawer } from "../../helpers/handleContentDrawer";
+import { handleConnect, handleNodeChange } from "../../helpers/flow.helper";
 
-function DnDFlow() {
+interface DnDFlowProps {
+  nodes: Node[];
+  setNodes: (nodes: Node[] | ((nodes: Node[]) => Node[])) => void;
+  onNodesChange: (changes: NodeChange<Node>[]) => void;
+  edges: Edge[];
+  setEdges: (edges: Edge[] | ((edges: Edge[]) => Edge[])) => void;
+  onEdgesChange: (changes: EdgeChange<Edge>[]) => void;
+}
+
+function DnDFlow({
+  nodes,
+  setNodes,
+  onNodesChange,
+  edges,
+  setEdges,
+  onEdgesChange,
+}: DnDFlowProps) {
   const [isLocked, setIsLocked] = useState<boolean>(false);
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node>(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initialEdges);
-
   const [selectedNode, setSelectedNode] = useState<Node>();
-
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
 
   const { screenToFlowPosition } = useReactFlow();
   const [type] = useDnD();
-
   const idRef = useRef(3);
   const getId = useCallback(() => `dndnode_${idRef.current++}`, []);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
@@ -58,7 +60,6 @@ function DnDFlow() {
       const { height } = reactFlowWrapper.current.getBoundingClientRect();
       const centerX = 150;
       const centerY = height / 2;
-
       const nodeSpacing = 100;
 
       setNodes((nds) =>
@@ -84,35 +85,6 @@ function DnDFlow() {
     return handleContentDrawer((selectedNode?.data.name as string) || "");
   }, [selectedNode]);
 
-  const handleNodeChange = useCallback(
-    (changes: NodeChange[]) => {
-      onNodesChange(changes);
-      const removeNodeIds = changes
-        .filter((node) => node.type === "remove")
-        .map((node) => node.id);
-      if (selectedNode && removeNodeIds.includes(selectedNode.id)) {
-        setSelectedNode(undefined);
-        setDrawerVisible(false);
-      }
-    },
-    [onNodesChange, selectedNode]
-  );
-
-  const onConnect: OnConnect = useCallback(
-    (params: Connection) => {
-      const edgeWithArrow = {
-        ...params,
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          width: 20,
-          height: 20,
-        },
-      };
-      setEdges((eds) => addEdge(edgeWithArrow, eds));
-    },
-    [setEdges]
-  );
-
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
@@ -122,9 +94,7 @@ function DnDFlow() {
     (event: React.DragEvent) => {
       event.preventDefault();
 
-      if (!type) {
-        return;
-      }
+      if (!type) return;
 
       const reactFlowData = event.dataTransfer.getData("application/reactflow");
       const nodeData = reactFlowData ? JSON.parse(reactFlowData) : {};
@@ -163,9 +133,17 @@ function DnDFlow() {
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
-        onNodesChange={handleNodeChange}
+        onNodesChange={(changes) =>
+          handleNodeChange(
+            changes,
+            onNodesChange,
+            selectedNode,
+            setSelectedNode,
+            setDrawerVisible
+          )
+        }
         onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
+        onConnect={(params) => handleConnect(params, setEdges)}
         onDrop={onDrop}
         onDragOver={onDragOver}
         connectionLineStyle={connectionLineStyle}
@@ -189,7 +167,6 @@ function DnDFlow() {
                   src={selectedNode.data.image as string}
                   alt={selectedNode.data.name as string}
                   width={40}
-         
                 />
               }
               text={selectedNode.data.name as string}

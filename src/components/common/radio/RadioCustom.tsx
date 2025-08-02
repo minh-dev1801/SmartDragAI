@@ -17,7 +17,7 @@ const RadioCustom = ({ value, onChange }: RadioCustomProps) => {
           className="absolute top-4 right-4 w-5 h-5 bg-blue-500"
         />
         <h3 className="text-md font-semibold mb-2">Create Record</h3>
-        <p className="text-[12px] text-gray-500 w-[90%]">
+        <p className="text-[12px] text-gray-500">
           Cho phép tùy chỉnh tạo bản ghi của một đối tượng và sử dụng bàn ghi đó
           trong quy trình.
         </p>
@@ -34,7 +34,7 @@ const RadioCustom = ({ value, onChange }: RadioCustomProps) => {
           className="absolute top-4 right-4 w-5 h-5 bg-blue-500"
         />
         <h3 className="text-md font-semibold mb-2">Update Record</h3>
-        <p className="text-[12px] text-gray-500 w-[90%]">
+        <p className="text-[12px] text-gray-500">
           Cho phép tùy chỉnh cập nhật dữ liệu bản ghi của một đối tượng và sử
           dụng bản ghi đó trong các bước tiếp theo của quy trình.
         </p>

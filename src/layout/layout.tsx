@@ -9,8 +9,21 @@ import PopoverCus from "../components/common/PopoverCus";
 import Infor from "../components/contents/Infor";
 import { antTabsContentStyles } from "../constants/styles";
 import DnDFlow from "../components/flow/DnDFlow.tsx";
+import { initialEdges, initialNodes } from "../constants/flow.tsx";
+import { useXmlConverter } from "../hooks/useXmlConverter.tsx";
+import {
+  useEdgesState,
+  useNodesState,
+  type Edge,
+  type Node,
+} from "@xyflow/react";
+import ExportButtons from "../components/flow/ExportButtons.tsx";
 
 export const Layout: React.FC = () => {
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initialEdges);
+  const { downloadXML, copyXMLToClipboard } = useXmlConverter(nodes, edges);
+
   return (
     <div className="h-screen min-h-screen max-h-screen flex gap-4">
       <Sidebar />
@@ -31,15 +44,29 @@ export const Layout: React.FC = () => {
               <GoInfo className="text-gray-400 cursor-pointer mt-1" size={16} />
             </PopoverCus>
           </div>
-
-          <Button type="primary" className="mr-5">Lưu</Button>
+          <div className="flex gap-2">
+            <ExportButtons
+              onDownloadXML={downloadXML}
+              onCopyXML={copyXMLToClipboard}
+            />
+            <Button type="primary" className="mr-5">
+              Lưu
+            </Button>
+          </div>
         </div>
         <div className="flex gap-4 mt-4 h-[calc(100vh-190px)]">
           <div className="w-1/4 py-2 pl-4 pr-2 border border-gray-300 rounded-lg relative">
             <Tabs items={tabItems} className={antTabsContentStyles} />
           </div>
           <div className="flex-1 py-2 px-4 border border-gray-300 rounded-lg mr-4">
-            <DnDFlow />
+            <DnDFlow
+              nodes={nodes}
+              setNodes={setNodes}
+              onNodesChange={onNodesChange}
+              edges={edges}
+              setEdges={setEdges}
+              onEdgesChange={onEdgesChange}
+            />
           </div>
         </div>
       </div>
