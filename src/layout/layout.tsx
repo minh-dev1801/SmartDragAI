@@ -22,12 +22,7 @@ import ExportButtons from "../components/flow/ExportButtons.tsx";
 export const Layout: React.FC = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initialEdges);
-  const { downloadXML, copyXMLToClipboard, uploadXML } = useXmlConverter(
-    nodes,
-    edges,
-    setNodes,
-    setEdges
-  );
+  const { downloadXML } = useXmlConverter(nodes, edges);
   return (
     <div className="h-screen min-h-screen max-h-screen flex gap-4">
       <Sidebar />
@@ -49,11 +44,7 @@ export const Layout: React.FC = () => {
             </PopoverCus>
           </div>
           <div className="flex gap-2">
-            <ExportButtons
-              onDownloadXML={downloadXML}
-              onCopyXML={copyXMLToClipboard}
-              onUploadXML={uploadXML}
-            />
+            <ExportButtons onDownloadXML={downloadXML} />
             <Button type="primary" className="mr-5">
               Lưu
             </Button>

@@ -19,7 +19,6 @@ import {
 import "@xyflow/react/dist/style.css";
 import { connectionLineStyle, nodeTypes } from "../../constants/flow";
 import { useDnD } from "../../hooks/useDnD";
-
 import CustomControls from "./CustomControls";
 import ArrowFlow from "../icons/ArrowFlow";
 import DrawerCustom from "../common/drawer/DrawerCustom";
@@ -48,7 +47,6 @@ function DnDFlow({
   const [isLocked, setIsLocked] = useState<boolean>(false);
   const [selectedNode, setSelectedNode] = useState<Node>();
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
-
   const { screenToFlowPosition } = useReactFlow();
   const [type] = useDnD();
   const idRef = useRef(3);

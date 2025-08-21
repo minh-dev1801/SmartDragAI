@@ -1,265 +1,262 @@
-import { useCallback } from "react";
-import { create } from "xmlbuilder2";
-import type { Edge, EdgeMarkerType, Node } from "@xyflow/react";
+import { useCallback, useMemo } from "react";
+import BpmnModdle from "bpmn-moddle";
+import type { Edge, Node } from "@xyflow/react";
 import { message } from "antd";
+import { saveAs } from "file-saver";
 
-export const useXmlConverter = (
-  nodes: Node[],
-  edges: Edge[],
-  setNodes: (nodes: Node[] | ((nodes: Node[]) => Node[])) => void,
-  setEdges: (edges: Edge[] | ((edges: Edge[]) => Edge[])) => void
-) => {
-  // Hàm chuyển đổi React Flow sang XML
-  const convertToXML = useCallback(() => {
-    try {
-      const root = create({ version: "1.0", encoding: "UTF-8" })
-        .ele("reactflow")
-        .att("version", "1.0")
-        .att("timestamp", new Date().toISOString());
+export const useXmlConverter = (nodes: Node[], edges: Edge[]) => {
+  const moddle = useMemo(() => new BpmnModdle(), []);
 
-      // Thêm nodes vào XML
-      const nodesElement = root.ele("nodes");
-      nodes.forEach((node) => {
-        const nodeElement = nodesElement
-          .ele("node")
-          .att("id", node.id)
-          .att("type", node.type as string)
-          .att("x", node.position.x.toString())
-          .att("y", node.position.y.toString());
+  console.log("moddle: ", moddle);
 
-        if (node.data) {
-          const dataElement = nodeElement.ele("data");
-          Object.entries(node.data).forEach(([key, value]) => {
-            if (key === "icon" && typeof value === "object") {
-              dataElement.ele(key).txt(JSON.stringify(value));
-            } else {
-              dataElement.ele(key).txt(String(value));
-            }
-          });
-        }
-
-        if (node.measured) {
-          nodeElement.att("width", (node.measured.width as number).toString());
-          nodeElement.att(
-            "height",
-            (node.measured.height as number).toString()
-          );
-        }
-      });
-
-      // Thêm edges vào XML
-      const edgesElement = root.ele("edges");
-      edges.forEach((edge) => {
-        const edgeElement = edgesElement
-          .ele("edge")
-          .att("id", edge.id)
-          .att("source", edge.source)
-          .att("target", edge.target)
-          .att("type", edge.type as string);
-
-        if (edge.sourceHandle)
-          edgeElement.att("sourceHandle", edge.sourceHandle);
-        if (edge.targetHandle)
-          edgeElement.att("targetHandle", edge.targetHandle);
-
-        if (edge.markerEnd) {
-          const markerElement = edgeElement.ele("markerEnd");
-          Object.entries(edge.markerEnd).forEach(([key, value]) => {
-            markerElement.att(key, String(value));
-          });
-        }
-      });
-
-      return root.end({ prettyPrint: true });
-    } catch (error) {
-      console.error("Error converting to XML:", error);
-      return null;
-    }
-  }, [nodes, edges]);
-
-  // Hàm parse XML thành React Flow data
-  const parseXMLToFlow = useCallback((xmlString: string) => {
-    try {
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(xmlString, "application/xml");
-
-      // Kiểm tra lỗi parsing
-      const parserError = xmlDoc.querySelector("parsererror");
-      if (parserError) {
-        throw new Error("Invalid XML format");
-      }
-
-      const parsedNodes: Node[] = [];
-      const parsedEdges: Edge[] = [];
-
-      // Parse nodes
-      const nodeElements = xmlDoc.querySelectorAll("node");
-      nodeElements.forEach((nodeEl) => {
-        const node: Node = {
-          id: nodeEl.getAttribute("id") || "",
-          type: nodeEl.getAttribute("type") || "default",
-          position: {
-            x: parseFloat(nodeEl.getAttribute("x") || "0"),
-            y: parseFloat(nodeEl.getAttribute("y") || "0"),
-          },
-          data: {},
-        };
-
-        // Parse node data
-        const dataElement = nodeEl.querySelector("data");
-        if (dataElement) {
-          const dataChildren = dataElement.children;
-          for (let i = 0; i < dataChildren.length; i++) {
-            const child = dataChildren[i];
-            const key = child.tagName;
-            const value = child.textContent || "";
-
-            // Try to parse JSON for icon field
-            if (key === "icon") {
-              try {
-                node.data[key] = JSON.parse(value);
-              } catch {
-                node.data[key] = value;
-              }
-            } else {
-              node.data[key] = value;
-            }
-          }
-        }
-
-        // Parse measured dimensions if available
-        const width = nodeEl.getAttribute("width");
-        const height = nodeEl.getAttribute("height");
-        if (width && height) {
-          node.measured = {
-            width: parseFloat(width),
-            height: parseFloat(height),
-          };
-        }
-
-        parsedNodes.push(node);
-      });
-
-      // Parse edges
-      const edgeElements = xmlDoc.querySelectorAll("edge");
-      edgeElements.forEach((edgeEl) => {
-        const edge: Edge = {
-          id: edgeEl.getAttribute("id") || "",
-          source: edgeEl.getAttribute("source") || "",
-          target: edgeEl.getAttribute("target") || "",
-          type: edgeEl.getAttribute("type") || "default",
-        };
-
-        // Parse optional attributes
-        const sourceHandle = edgeEl.getAttribute("sourceHandle");
-        const targetHandle = edgeEl.getAttribute("targetHandle");
-        if (sourceHandle) edge.sourceHandle = sourceHandle;
-        if (targetHandle) edge.targetHandle = targetHandle;
-
-        // Parse markerEnd if exists
-        const markerElement = edgeEl.querySelector("markerEnd");
-        if (markerElement) {
-          const markerEnd: Record<string, string | number> = {};
-          Array.from(markerElement.attributes).forEach((attr) => {
-            // Try to parse as number, fallback to string
-            const numValue = parseFloat(attr.value);
-            markerEnd[attr.name] = !isNaN(numValue) ? numValue : attr.value;
-          });
-          edge.markerEnd = markerEnd as EdgeMarkerType;
-        }
-
-        parsedEdges.push(edge);
-      });
-
-      return { nodes: parsedNodes, edges: parsedEdges };
-    } catch (error) {
-      console.error("Error parsing XML:", error);
-      throw new Error("Failed to parse XML file");
-    }
-  }, []);
-
-  // Hàm upload và import XML
-  const uploadXML = useCallback(
-    (file: File) => {
-      return new Promise<void>((resolve, reject) => {
-        const reader = new FileReader();
-
-        reader.onload = (e) => {
-          try {
-            const xmlString = e.target?.result as string;
-            const { nodes: parsedNodes, edges: parsedEdges } =
-              parseXMLToFlow(xmlString);
-
-            // Update state with parsed data
-            setNodes(parsedNodes);
-            setEdges(parsedEdges);
-
-            message.success(
-              `Đã import thành công ${parsedNodes.length} nodes và ${parsedEdges.length} edges từ file XML!`
-            );
-            resolve();
-          } catch (error) {
-            console.error("Error importing XML:", error);
-            message.error(
-              "Lỗi khi import file XML. Vui lòng kiểm tra định dạng file!"
-            );
-            reject(error);
-          }
-        };
-
-        reader.onerror = () => {
-          message.error("Lỗi khi đọc file!");
-          reject(new Error("File read error"));
-        };
-
-        reader.readAsText(file);
-      });
-    },
-    [parseXMLToFlow, setNodes, setEdges]
+  // Helper function to get node center point
+  const getNodeCenter = useCallback(
+    (node: Node) => ({
+      x: node.position.x + (node.width || 100) / 2,
+      y: node.position.y + (node.height || 80) / 2,
+    }),
+    []
   );
 
-  // Hàm tải xuống XML
-  const downloadXML = useCallback(() => {
-    const xmlString = convertToXML();
-    if (!xmlString) {
-      message.error("Không thể tạo file XML!");
-      return;
-    }
+  // Helper function to determine BPMN element type - sửa để dựa vào node.data.name
+  const getBpmnElementType = useCallback((nodeName: string) => {
+    // Normalize tên: lowercase và loại bỏ khoảng trắng để khớp key
+    const normalized = nodeName.toLowerCase().replace(/\s+/g, "");
 
-    const blob = new Blob([xmlString], { type: "application/xml" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `reactflow_${new Date().getTime()}.xml`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    message.success("Đã tải xuống file XML!");
-  }, [convertToXML]);
+    const typeMap: Record<string, string> = {
+      start: "bpmn:StartEvent",
+      end: "bpmn:EndEvent",
+      task: "bpmn:Task",
+      usertask: "bpmn:UserTask",
+      servicetask: "bpmn:ServiceTask",
+      gateway: "bpmn:ExclusiveGateway",
+      exclusivegateway: "bpmn:ExclusiveGateway",
+      parallelgateway: "bpmn:ParallelGateway",
+      inclusivegateway: "bpmn:InclusiveGateway",
+      subprocess: "bpmn:SubProcess",
+      callactivity: "bpmn:CallActivity",
+      intermediatecatchevent: "bpmn:IntermediateCatchEvent",
+      intermediatethrowevent: "bpmn:IntermediateThrowEvent",
 
-  // Hàm copy XML vào clipboard
-  const copyXMLToClipboard = useCallback(async () => {
-    const xmlString = convertToXML();
-    if (!xmlString) {
-      message.error("Không thể tạo XML!");
-      return;
-    }
+      // Thêm map cho các loại task khác từ mảng tasks/gateways/events của bạn
+      sendemail: "bpmn:SendTask", // Hoặc "bpmn:ServiceTask" nếu phù hợp
+      sendhttprequest: "bpmn:ServiceTask",
+      organization: "bpmn:BusinessRuleTask", // Ví dụ, tùy chỉnh theo nhu cầu
+      sendnotification: "bpmn:SendTask",
+      createorupdaterecord: "bpmn:ServiceTask",
+      getrecord: "bpmn:ServiceTask",
+      loop: "bpmn:SubProcess", // Có thể dùng loop multi-instance
+      wait: "bpmn:IntermediateCatchEvent", // Ví dụ cho timer event
+      root: "bpmn:Task", // Nếu "Root" là task mặc định
+    };
+    return typeMap[normalized] || "bpmn:Task";
+  }, []);
 
+  // Create BPMN element from React Flow node - sửa để truyền node.data.name
+  const createBpmnElement = useCallback(
+    (node: Node) => {
+      console.log("node: ", node);
+      const elementType = getBpmnElementType(node.data?.name as string || "Task"); // Sửa ở đây: dùng node.data.name
+      console.log("elementType: ", elementType);
+      return moddle.create(elementType, {
+        id: node.id,
+        name: node.data?.name || `Node ${node.id}`,
+      });
+    },
+    [moddle, getBpmnElementType]
+  );
+
+  // Create sequence flow from React Flow edge
+  const createSequenceFlow = useCallback(
+    (edge: Edge, sourceElement: any, targetElement: any) => {
+      console.log("edge: ", edge);
+      return moddle.create("bpmn:SequenceFlow", {
+        id: edge.id,
+        name: edge.label?.toString() || "",
+        sourceRef: sourceElement,
+        targetRef: targetElement,
+      });
+    },
+    [moddle]
+  );
+
+  // Create BPMN shape for diagram
+  const createBpmnShape = useCallback(
+    (node: Node, bpmnElement: any) => {
+      return moddle.create("bpmndi:BPMNShape", {
+        id: `Shape_${node.id}`,
+        bpmnElement: bpmnElement,
+        bounds: moddle.create("dc:Bounds", {
+          x: Math.round(node.position.x),
+          y: Math.round(node.position.y),
+          width: node.width || 100,
+          height: node.height || 80,
+        }),
+      });
+    },
+    [moddle]
+  );
+
+  // Create BPMN edge for diagram
+  const createBpmnEdge = useCallback(
+    (edge: Edge, sourceNode: Node, targetNode: Node, sequenceFlow: any) => {
+      const sourceCenter = getNodeCenter(sourceNode);
+      const targetCenter = getNodeCenter(targetNode);
+
+      console.log("sequenceFlow: ", sequenceFlow);
+
+      return moddle.create("bpmndi:BPMNEdge", {
+        id: `Edge_${edge.id}`,
+        bpmnElement: sequenceFlow,
+        waypoint: [
+          moddle.create("dc:Point", {
+            x: Math.round(sourceCenter.x),
+            y: Math.round(sourceCenter.y),
+          }),
+          moddle.create("dc:Point", {
+            x: Math.round(targetCenter.x),
+            y: Math.round(targetCenter.y),
+          }),
+        ],
+      });
+    },
+    [moddle, getNodeCenter]
+  );
+
+  // Main function to convert React Flow to BPMN XML
+  const convertToBpmnXml = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(xmlString);
-      message.success("XML đã được copy vào clipboard!");
-    } catch (error) {
-      console.error("Error copying to clipboard:", error);
-      message.error("Không thể copy vào clipboard");
-    }
-  }, [convertToXML]);
+      const elementMap: Record<string, any> = {};
+      const flowMap: Record<string, any> = {};
+      const flowElements: any[] = [];
 
-  return {
-    convertToXML,
-    downloadXML,
-    copyXMLToClipboard,
-    uploadXML,
-    parseXMLToFlow,
-  };
+      console.log("nodes: ", nodes);
+
+      // Create BPMN elements from nodes
+      nodes.forEach((node) => {
+        const element = createBpmnElement(node);
+        elementMap[node.id] = element;
+        console.log("elementMap: ", elementMap);
+        flowElements.push(element);
+        console.log("flowElements: ", flowElements);
+      });
+
+      // Create sequence flows from edges
+      edges.forEach((edge) => {
+        const sourceElement = elementMap[edge.source];
+        const targetElement = elementMap[edge.target];
+
+        if (sourceElement && targetElement) {
+          const sequenceFlow = createSequenceFlow(
+            edge,
+            sourceElement,
+            targetElement
+          );
+          flowMap[edge.id] = sequenceFlow;
+          console.log("flowMap: ", flowMap);
+          flowElements.push(sequenceFlow);
+        }
+      });
+
+      // Set incoming/outgoing references
+      nodes.forEach((node) => {
+        const element = elementMap[node.id];
+        const incomingFlows = edges
+          .filter((edge) => edge.target === node.id)
+          .map((edge) => flowMap[edge.id])
+          .filter(Boolean);
+        console.log("incomingFlows: ", incomingFlows);
+
+        const outgoingFlows = edges
+          .filter((edge) => edge.source === node.id)
+          .map((edge) => flowMap[edge.id])
+          .filter(Boolean);
+        console.log("outgoingFlows: ", outgoingFlows);
+
+        if (incomingFlows.length > 0) element.incoming = incomingFlows;
+        if (outgoingFlows.length > 0) element.outgoing = outgoingFlows;
+      });
+
+      console.log("elementMap: ", elementMap);
+
+      // Create process
+      const process = moddle.create("bpmn:Process", {
+        id: "Process_1",
+        isExecutable: true,
+        flowElements: flowElements,
+      });
+
+      // Create diagram elements
+      const shapes = nodes.map((node) =>
+        createBpmnShape(node, elementMap[node.id])
+      );
+
+      const diagramEdges = edges
+        .map((edge) => {
+          const sourceNode = nodes.find((n) => n.id === edge.source);
+          const targetNode = nodes.find((n) => n.id === edge.target);
+          const sequenceFlow = flowMap[edge.id];
+
+          return sourceNode && targetNode && sequenceFlow
+            ? createBpmnEdge(edge, sourceNode, targetNode, sequenceFlow)
+            : null;
+        })
+        .filter(Boolean);
+
+      // Create BPMN diagram structure
+      const plane = moddle.create("bpmndi:BPMNPlane", {
+        id: "BPMNPlane_1",
+        bpmnElement: process,
+        planeElement: [...shapes, ...diagramEdges],
+      });
+
+      const diagram = moddle.create("bpmndi:BPMNDiagram", {
+        id: "BPMNDiagram_1",
+        plane: plane,
+      });
+
+      const definitions = moddle.create("bpmn:Definitions", {
+        id: "Definitions_1",
+        targetNamespace: "http://bpmn.io/schema/bpmn",
+        exporter: "React Flow BPMN Converter",
+        exporterVersion: "1.0.0",
+        rootElements: [process],
+        diagrams: [diagram],
+      });
+
+      const { xml } = await moddle.toXML(definitions);
+      return xml;
+    } catch (error) {
+      console.error("Error converting to BPMN XML:", error);
+      throw new Error(
+        `Failed to convert to BPMN XML: ${(error as Error).message}`
+      );
+    }
+  }, [
+    nodes,
+    edges,
+    moddle,
+    createBpmnElement,
+    createSequenceFlow,
+    createBpmnShape,
+    createBpmnEdge,
+  ]);
+
+  // Download XML file
+  const downloadXML = useCallback(async () => {
+    try {
+      const xmlContent = await convertToBpmnXml();
+      const blob = new Blob([xmlContent], { type: "application/xml" });
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const fileName = `bpmn-process-${timestamp}.bpmn`;
+
+      saveAs(blob, fileName);
+      message.success("Tải xuống BPMN XML thành công!");
+    } catch (error) {
+      console.error("Download error:", error);
+      message.error(`Lỗi khi tải xuống BPMN XML: ${(error as Error).message}`);
+    }
+  }, [convertToBpmnXml]);
+
+  return { downloadXML };
 };
