@@ -1,6 +1,10 @@
 import { Button, Checkbox, Form, Input } from "antd";
 import { Controller, useForm } from "react-hook-form";
 import HRFilterUI from "../../query-builder/HRFilter";
+import SettingIcon from "../../icons/SettingIcon";
+import { useState } from "react";
+import ModalCustom from "../../common/modal/ModalCustom";
+import FormSetup from "../../common/modal/FormSetup.modal";
 
 type FieldType = {
   name: string;
@@ -14,6 +18,7 @@ type FieldType = {
 
 const FormUserTask = () => {
   const { handleSubmit, control } = useForm<FieldType>();
+  const [openModel, setOpenModel] = useState(false);
 
   const onSubmit = handleSubmit((data: FieldType) => {
     console.log({ data });
@@ -80,6 +85,21 @@ const FormUserTask = () => {
           name="processingDeadline"
           control={control}
           render={({ field }) => <Checkbox {...field}>Thời hạn xử lý</Checkbox>}
+        />
+      </div>
+      <div className="mt-2">
+        <Button
+          color="primary"
+          variant="text"
+          icon={<SettingIcon />}
+          onClick={() => setOpenModel(true)}
+        >
+          Thiết lập biểu mẫu nhập liệu
+        </Button>
+        <ModalCustom
+          open={openModel}
+          content={<FormSetup />}
+          setOpen={setOpenModel}
         />
       </div>
       <div className="flex-row-center justify-end">
