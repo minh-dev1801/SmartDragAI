@@ -26,6 +26,8 @@ import HeaderDrawer from "../common/drawer/HeaderDrawer";
 import Image from "../common/Image";
 import { handleContentDrawer } from "../../helpers/handleContentDrawer";
 import { handleConnect, handleNodeChange } from "../../helpers/flow.helper";
+import ModalCustom from "../common/modal/ModalCustom";
+import FormSetup from "../common/modal/FormSetup.modal";
 
 interface DnDFlowProps {
   nodes: Node[];
@@ -126,6 +128,11 @@ function DnDFlow({
 
   return (
     <>
+      <ModalCustom
+        open={true}
+        content={<FormSetup />}
+        setOpen={()=>false}
+      />
       <ReactFlow
         ref={reactFlowWrapper}
         nodes={nodes}

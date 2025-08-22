@@ -29,14 +29,7 @@ const ModalCustom = ({ open, content, setOpen }: ModalCustomProp) => (
     ]}
     open={open}
     onCancel={() => setOpen(false)}
-    width={{
-      xs: "90%",
-      sm: "80%",
-      md: "70%",
-      lg: "60%",
-      xl: "50%",
-      xxl: "40%",
-    }}
+    width="95%"
   >
     {content}
   </Modal>
