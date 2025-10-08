@@ -5,9 +5,7 @@ interface ExportButtonsProps {
   onDownloadXML: () => void;
 }
 
-const ExportButtons = ({
-  onDownloadXML,
-}: ExportButtonsProps) => {
+const ExportButtons = ({ onDownloadXML }: ExportButtonsProps) => {
   return (
     <div className="flex gap-2">
       <Button
@@ -16,7 +14,7 @@ const ExportButtons = ({
         variant="filled"
         color="purple"
       >
-        Tải xuống BPMN
+        `Tải xuống` BPMN
       </Button>
     </div>
   );

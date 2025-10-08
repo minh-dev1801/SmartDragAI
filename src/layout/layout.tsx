@@ -23,6 +23,7 @@ export const Layout: React.FC = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initialEdges);
   const { downloadXML } = useXmlConverter(nodes, edges);
+
   return (
     <div className="h-screen min-h-screen max-h-screen flex gap-4">
       <Sidebar />

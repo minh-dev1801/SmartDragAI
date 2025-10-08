@@ -128,11 +128,7 @@ function DnDFlow({
 
   return (
     <>
-      <ModalCustom
-        open={true}
-        content={<FormSetup />}
-        setOpen={()=>false}
-      />
+      {/* <ModalCustom open={true} content={<FormSetup />} setOpen={() => false} /> */}
       <ReactFlow
         ref={reactFlowWrapper}
         nodes={nodes}

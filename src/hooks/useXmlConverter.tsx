@@ -3,11 +3,15 @@ import BpmnModdle from "bpmn-moddle";
 import type { Edge, Node } from "@xyflow/react";
 import { message } from "antd";
 import { saveAs } from "file-saver";
+import { useAppSelector } from "../redux/store/store";
+import { selectFormData } from "../redux/features/formExclusiveGateway/formExclusiveGatewaySlice";
 
 export const useXmlConverter = (nodes: Node[], edges: Edge[]) => {
   const moddle = useMemo(() => new BpmnModdle(), []);
+  const formData = useAppSelector(selectFormData as any);
 
   console.log("moddle: ", moddle);
+  console.log("formData: ", JSON.stringify(formData, null, 4));
 
   // Helper function to get node center point
   const getNodeCenter = useCallback(
@@ -56,7 +60,9 @@ export const useXmlConverter = (nodes: Node[], edges: Edge[]) => {
   const createBpmnElement = useCallback(
     (node: Node) => {
       console.log("node: ", node);
-      const elementType = getBpmnElementType(node.data?.name as string || "Task"); // Sửa ở đây: dùng node.data.name
+      const elementType = getBpmnElementType(
+        (node.data?.name as string) || "Task"
+      ); // Sửa ở đây: dùng node.data.name
       console.log("elementType: ", elementType);
       return moddle.create(elementType, {
         id: node.id,
@@ -181,7 +187,8 @@ export const useXmlConverter = (nodes: Node[], edges: Edge[]) => {
 
       // Create process
       const process = moddle.create("bpmn:Process", {
-        id: "Process_1",
+        id: "Loan",
+        name: "Loan",
         isExecutable: true,
         flowElements: flowElements,
       });
@@ -219,13 +226,28 @@ export const useXmlConverter = (nodes: Node[], edges: Edge[]) => {
         id: "Definitions_1",
         targetNamespace: "http://bpmn.io/schema/bpmn",
         exporter: "React Flow BPMN Converter",
-        exporterVersion: "1.0.0",
+        exporterVersion: "5.37.0",
         rootElements: [process],
         diagrams: [diagram],
       });
 
       const { xml } = await moddle.toXML(definitions);
-      return xml;
+      // POST-PROCESSING: Thêm Camunda namespace và attributes manually
+      let processedXml = xml;
+
+      // 1. Thêm xmlns:camunda vào definitions
+      processedXml = processedXml.replace(
+        'xmlns:di="http://www.omg.org/spec/DD/20100524/DI"',
+        'xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn"'
+      );
+
+      // 2. Thêm camunda:historyTimeToLive vào process
+      processedXml = processedXml.replace(
+        '<bpmn:process id="Loan" name="Loan" isExecutable="true">',
+        '<bpmn:process id="Loan" name="Loan" isExecutable="true" camunda:historyTimeToLive="180">'
+      );
+
+      return processedXml;
     } catch (error) {
       console.error("Error converting to BPMN XML:", error);
       throw new Error(

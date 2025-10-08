@@ -1,173 +1,341 @@
-import { Button, Col, Flex, Row } from "antd";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  MdClose,
-  MdAdd,
-  MdViewModule,
-  MdTextFields,
-  MdList,
-  MdCropSquare,
-  MdLink,
-  MdNumbers,
-  MdFileUpload,
-  MdComment,
-  MdTimeline,
-  MdFolder,
-  MdTab,
-} from "react-icons/md";
+  DndContext,
+  DragOverlay,
+  type DragEndEvent,
+  type DragOverEvent,
+  type DragStartEvent,
+} from "@dnd-kit/core";
+import Announcements from "../../dnd-kit/Announcements";
+import { SidebarField, Sidebar } from "../../dnd-kit/Sidebar";
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { Form, Input, Checkbox, Button, Divider, message } from "antd";
+import { Field, Canvas } from "../../dnd-kit/Canvas";
+import { useImmer } from "use-immer";
+import type {
+  FieldType,
+  FieldTypeData,
+  SidebarFieldType,
+} from "../../../types/dnd-kit";
+import { MdCropSquare, MdDownload } from "react-icons/md";
+import { exportCamundaFormConfig } from "../../dnd-kit/ExportForm";
 
-const FormSetup = () => {
-  const [selectedComponent, setSelectedComponent] = useState(null);
-  const [formComponents, setFormComponents] = useState([
-    {
-      id: 1,
-      type: "layout-row",
-      title: "Layout Row",
-      children: [
-        {
-          id: 2,
-          type: "layout-column",
-          title: "Layout Column",
-          children: [
-            {
-              id: 3,
-              type: "section",
-              title: "Section",
-              children: [
-                {
-                  id: 4,
-                  type: "group",
-                  title: "Group",
-                  children: [],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-  ]);
+const { TextArea } = Input;
 
-  const componentTypes = [
-    {
-      id: "section",
-      name: "Section",
-      icon: MdCropSquare,
-      color: "text-purple-600",
-    },
-    {
-      id: "tab-section",
-      name: "Tab-Section",
-      icon: MdTab,
-      color: "text-purple-600",
-    },
-    { id: "group", name: "Group", icon: MdFolder, color: "text-red-500" },
-    {
-      id: "display-box",
-      name: "Display Box",
-      icon: MdViewModule,
-      color: "text-orange-500",
-    },
-    {
-      id: "button-group",
-      name: "Button Group",
-      icon: MdCropSquare,
-      color: "text-green-600",
-    },
-  ];
+function getData(prop) {
+  return prop?.data?.current ?? {};
+}
 
-  const dataTypes = [
-    {
-      id: "text-short",
-      name: "Văn bản ngắn",
-      icon: MdTextFields,
-      color: "text-purple-600",
-    },
-    {
-      id: "text-long",
-      name: "Văn bản dài",
-      icon: MdList,
-      color: "text-blue-500",
-    },
-    {
-      id: "link",
-      name: "Đường dẫn liên kết",
-      icon: MdLink,
-      color: "text-orange-500",
-    },
-    { id: "number", name: "Số", icon: MdNumbers, color: "text-blue-600" },
-    {
-      id: "file-upload",
-      name: "Tải lên tệp tin",
-      icon: MdFileUpload,
-      color: "text-pink-500",
-    },
-    {
-      id: "comment",
-      name: "Phần trăm",
-      icon: MdComment,
-      color: "text-green-600",
-    },
-    {
-      id: "progress",
-      name: "Tiến độ",
-      icon: MdTimeline,
-      color: "text-red-500",
-    },
-  ];
+function createSpacer({ id }) {
+  return {
+    id,
+    type: "spacer",
+    name: "spacer",
+    title: "spacer",
+  };
+}
 
-  const renderComponent = (component, depth = 0) => {
-    const getBackgroundColor = (type) => {
-      switch (type) {
-        case "layout-row":
-          return "bg-blue-100 border-blue-300";
-        case "layout-column":
-          return "bg-green-100 border-green-300";
-        case "section":
-          return "bg-purple-100 border-purple-300";
-        case "group":
-          return "bg-red-100 border-red-300";
-        default:
-          return "bg-gray-100 border-gray-300";
-      }
-    };
+interface FieldFormType extends FieldType {
+  description?: string;
+  defaultValue?: string;
+  options?: string;
+  required?: boolean;
+}
 
-    const getTextColor = (type) => {
-      switch (type) {
-        case "layout-row":
-          return "text-blue-700";
-        case "layout-column":
-          return "text-green-700";
-        case "section":
-          return "text-purple-700";
-        case "group":
-          return "text-red-700";
-        default:
-          return "text-gray-700";
-      }
-    };
+// Properties Panel Component
+const PropertiesPanel: React.FC<{
+  selectedField: FieldFormType | undefined;
+  onUpdateField: (
+    fieldId: string | number,
+    updates: Partial<FieldFormType>
+  ) => void;
+  onDownloadConfig: () => void;
+}> = ({ selectedField, onUpdateField, onDownloadConfig }) => {
+  const [form] = Form.useForm<FieldFormType>();
 
+  useEffect(() => {
+    if (selectedField) {
+      form.setFieldsValue({
+        title: selectedField.title || "",
+        description: selectedField.description || "",
+        name: selectedField.name || "",
+        defaultValue: selectedField.defaultValue || "",
+        options: selectedField.options || "",
+        required: selectedField.required || false,
+      });
+    }
+  }, [selectedField, form]);
+
+  const handleFinish = (values: FieldFormType) => {
+    if (selectedField) {
+      onUpdateField(selectedField.id, values);
+      message.success("Thuộc tính đã được cập nhật thành công!");
+    } else {
+      message.error("Vui lòng chọn một trường để cập nhật!");
+    }
+  };
+
+  if (!selectedField) {
     return (
-      <div
-        key={component.id}
-        className={`border-2 border-dashed rounded-lg p-4 mb-4 ${getBackgroundColor(
-          component.type
-        )}`}
-        style={{ marginLeft: depth * 8 }}
-      >
-        <div className={`font-medium mb-2 ${getTextColor(component.type)}`}>
-          {component.title}
-        </div>
-        {component.children &&
-          component.children.map((child) => renderComponent(child, depth + 1))}
-        {component.type === "layout-row" && (
-          <button className="flex items-center text-gray-600 text-sm mt-2">
-            <MdAdd className="w-4 h-4 mr-1" />
-            Thêm Layout Row
-          </button>
-        )}
+      <div style={{ textAlign: "center", marginTop: 32, color: "#8c8c8c" }}>
+        <MdCropSquare
+          style={{
+            width: 48,
+            height: 48,
+            margin: "0 auto 16px",
+            color: "#d9d9d9",
+          }}
+        />
+        <p style={{ fontSize: 14 }}>
+          Chọn một thành phần để chỉnh sửa thuộc tính
+        </p>
       </div>
     );
+  }
+
+  return (
+    <Form
+      form={form}
+      layout="vertical"
+      onFinish={handleFinish}
+      style={{ padding: 16 }}
+    >
+      <Form.Item<FieldFormType>
+        label="Tên trường"
+        name="title"
+        rules={[{ required: true, message: "Vui lòng nhập tên trường!" }]}
+      >
+        <Input placeholder="Nhập tên trường" />
+      </Form.Item>
+
+      <Form.Item<FieldFormType> label="Mô tả trường" name="description">
+        <TextArea rows={3} placeholder="Nhập mô tả trường" />
+      </Form.Item>
+
+      <Form.Item<FieldFormType>
+        label="Tên biến"
+        name="name"
+        extra="Liên kết với biến form"
+        rules={[{ required: true, message: "Vui lòng nhập tên biến!" }]}
+      >
+        <Input placeholder="Nhập tên biến" />
+      </Form.Item>
+
+      <Form.Item<FieldFormType> label="Giá trị mặc định" name="defaultValue">
+        <Input placeholder="Nhập giá trị mặc định" />
+      </Form.Item>
+
+      {selectedField.type === "select" && (
+        <Form.Item<FieldFormType>
+          label="Tùy chọn"
+          name="options"
+          rules={[
+            { required: true, message: "Vui lòng nhập ít nhất một tùy chọn!" },
+          ]}
+        >
+          <TextArea rows={4} placeholder="Mỗi tùy chọn một dòng" />
+        </Form.Item>
+      )}
+
+      <Form.Item<FieldFormType>
+        name="required"
+        valuePropName="checked"
+        label={null}
+      >
+        <Checkbox>Bắt buộc</Checkbox>
+      </Form.Item>
+
+      <Divider />
+
+      <Form.Item<FieldFormType> label={null}>
+        <Button type="primary" htmlType="submit" block>
+          Lưu thay đổi
+        </Button>
+      </Form.Item>
+      <Form.Item<FieldFormType> label={null}>
+        <Button
+          type="default"
+          icon={<MdDownload />}
+          onClick={onDownloadConfig}
+          block
+        >
+          Tải xuống cấu hình biểu mẫu
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+};
+
+const FormSetup = () => {
+  const [sidebarFieldsRegenKey, setSidebarFieldsRegenKey] = useState(
+    Date.now()
+  );
+  const [selectedFieldId, setSelectedFieldId] = useState<string | number>();
+  const spacerInsertedRef = useRef(false);
+  const currentDragFieldRef = useRef<FieldType | null>(null);
+  const [activeSidebarField, setActiveSidebarField] =
+    useState<SidebarFieldType | null>(null);
+  const [activeField, setActiveField] = useState<FieldType | null>(null);
+  const [data, updateData] = useImmer<FieldTypeData>({
+    fields: [],
+  });
+
+  const { fields } = data;
+  const selectedField = fields.find((field) => field.id === selectedFieldId);
+
+  // Hàm cập nhật thuộc tính trường
+  const handleUpdateField = (
+    fieldId: string | number,
+    updates: Partial<FieldFormType>
+  ) => {
+    updateData((draft) => {
+      const fieldIndex = draft.fields.findIndex((f) => f.id === fieldId);
+      if (fieldIndex > -1) {
+        draft.fields[fieldIndex] = {
+          ...draft.fields[fieldIndex],
+          ...updates,
+        };
+      }
+    });
+  };
+
+  // Hàm tải cấu hình biểu mẫu
+  const handleDownloadConfig = () => {
+    // try {
+    //   const formConfig = {
+    //     fields: fields.filter((field) => field.type !== "spacer"),
+    //   };
+    //   const jsonString = JSON.stringify(formConfig, null, 2);
+    //   const blob = new Blob([jsonString], {
+    //     type: "application/json;charset=utf-8",
+    //   });
+    //   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    //   const fileName = `form-config-${timestamp}.json`;
+    //   saveAs(blob, fileName);
+    //   message.success(`Đã tải xuống cấu hình biểu mẫu: ${fileName}`);
+    // } catch (error) {
+    //   console.error("Lỗi khi tải xuống:", error);
+    //   message.error("Có lỗi xảy ra khi tải xuống cấu hình biểu mẫu");
+    // }
+    exportCamundaFormConfig(fields);  
+  };
+
+  const cleanUp = () => {
+    setActiveSidebarField(null);
+    setActiveField(null);
+    currentDragFieldRef.current = null;
+    spacerInsertedRef.current = false;
+  };
+
+  const handleFieldSelect = (fieldId: string) => {
+    setSelectedFieldId(fieldId);
+  };
+
+  const handleDragStart = (e: DragStartEvent) => {
+    const { active } = e;
+
+    const activeData = getData(active);
+
+    if (activeData.fromSidebar) {
+      const { field } = activeData;
+      const { type } = field;
+
+      setActiveSidebarField(field);
+
+      currentDragFieldRef.current = {
+        id: active.id,
+        type,
+        name: `${type}${fields.length + 1}`,
+        title: `${type}${fields.length + 1}`,
+      };
+    } else {
+      const { field, index } = activeData;
+
+      setActiveField(field);
+
+      currentDragFieldRef.current = field;
+
+      updateData((draft) => {
+        draft.fields.splice(index, 1, createSpacer({ id: active.id }));
+      });
+    }
+  };
+
+  const handleDragOver = (e: DragOverEvent) => {
+    const { active, over } = e;
+    const activeData = getData(active);
+
+    // Chỉ xử lý khi kéo từ sidebar
+    if (!activeData.fromSidebar) return;
+
+    const overData = getData(over);
+    const spacerId = `${active.id}-spacer`;
+
+    updateData((draft) => {
+      // Tìm chỉ số của spacer hiện tại (nếu có)
+      const spacerIndex = draft.fields.findIndex((f) => f.id === spacerId);
+
+      // Trường hợp không có vị trí thả hợp lệ: xóa spacer
+      if (!over) {
+        if (spacerIndex > -1) {
+          draft.fields = draft.fields.filter((f) => f.id !== spacerId);
+          spacerInsertedRef.current = false;
+        }
+        return;
+      }
+
+      // Xác định vị trí chèn hoặc di chuyển spacer
+      const nextIndex =
+        overData.index > -1 ? overData.index : draft.fields.length;
+
+      // Nếu spacer chưa được chèn
+      if (!spacerInsertedRef.current) {
+        const spacer = createSpacer({ id: spacerId });
+        draft.fields.splice(nextIndex, 0, spacer);
+        spacerInsertedRef.current = true;
+      }
+      // Nếu spacer đã tồn tại và cần di chuyển
+      else if (spacerIndex > -1 && spacerIndex !== nextIndex) {
+        draft.fields = arrayMove(draft.fields, spacerIndex, nextIndex);
+      }
+    });
+  };
+
+  const handleDragEnd = (e: DragEndEvent) => {
+    const { over } = e;
+
+    if (!over) {
+      cleanUp();
+      updateData((draft) => {
+        draft.fields = draft.fields.filter((f) => f.type !== "spacer");
+      });
+      return;
+    }
+
+    const nextField = currentDragFieldRef.current;
+
+    if (nextField) {
+      const overData = getData(over);
+
+      updateData((draft) => {
+        const spacerIndex = draft.fields.findIndex((f) => f.type === "spacer");
+        draft.fields.splice(spacerIndex, 1, nextField);
+
+        draft.fields = arrayMove(
+          draft.fields,
+          spacerIndex,
+          overData.index || 0
+        );
+      });
+    }
+
+    setSelectedFieldId(nextField?.id);
+    setSidebarFieldsRegenKey(Date.now());
+    cleanUp();
   };
 
   return (
@@ -177,79 +345,35 @@ const FormSetup = () => {
           <h2 className="font-semibold text-gray-800">Thiết lập biểu mẫu</h2>
         </div>
       </div>
+
       <div className="flex bg-gray-50">
-        {/* Sidebar */}
-        <div className="w-64 bg-white border-r border-gray-200 flex flex-col h-[calc(100vh-190px)] overflow-auto">
-          {/* Container Section */}
-          <div className="p-4">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">
-              Container
-            </h3>
-            <div className="space-y-2">
-              {componentTypes.map((component) => (
-                <div
-                  key={component.id}
-                  className="flex items-center p-2 rounded-md hover:bg-gray-100 cursor-pointer"
-                >
-                  <component.icon
-                    className={`w-4 h-4 mr-2 ${component.color}`}
-                  />
-                  <span className="text-sm text-gray-700">
-                    {component.name}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+        <DndContext
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+          autoScroll
+        >
+          <Announcements />
+          <Sidebar key={sidebarFieldsRegenKey} />
+          <SortableContext
+            strategy={verticalListSortingStrategy}
+            items={fields.map((field) => field.id)}
+          >
+            <Canvas
+              fields={fields}
+              selectedFieldId={selectedFieldId}
+              onFieldSelect={handleFieldSelect}
+            />
+          </SortableContext>
+          <DragOverlay dropAnimation={null}>
+            {activeSidebarField ? (
+              <SidebarField overlay field={activeSidebarField} />
+            ) : null}
+            {activeField ? <Field overlay field={activeField} /> : null}
+          </DragOverlay>
+        </DndContext>
 
-          {/* Data Types Section */}
-          <div className="p-4">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">
-              Kiểu dữ liệu
-            </h3>
-            <div className="space-y-2">
-              {dataTypes.map((dataType) => (
-                <div
-                  key={dataType.id}
-                  className="flex items-center p-2 rounded-md hover:bg-gray-100 cursor-pointer"
-                >
-                  <dataType.icon className={`w-4 h-4 mr-2 ${dataType.color}`} />
-                  <span className="text-sm text-gray-700">{dataType.name}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Main Content - Canvas */}
-        <div className="flex-1 flex flex-col bg-white">
-          <div className="mr-8 mt-4 flex justify-end mb-3">
-            <Button variant="outlined" color="primary" size="small">
-              Thiết lập thuộc tính trang
-            </Button>
-          </div>
-
-          {/* Header */}
-
-          {/* Canvas */}
-          <div className="flex-1 px-6 overflow-auto">
-            <div className="border border-gray-200 p-1 flex gap-1 cursor-pointer mb-4 rounded">
-              <MdCropSquare className="w-5 h-5 text-orange-500" />
-              <span className="text-sm text-gray-600">Tiêu đề màn hình</span>
-            </div>
-
-            <div className="max-w-full">
-              {formComponents.map((component) => renderComponent(component))}
-
-              <button className="flex items-center text-gray-600 text-sm">
-                <MdAdd className="w-4 h-4 mr-1" />
-                Thêm Layout Row
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Panel - Properties */}
+        {/* Properties Panel */}
         <div className="w-80 bg-white border-l border-gray-200 flex flex-col">
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
@@ -260,18 +384,11 @@ const FormSetup = () => {
           </div>
 
           <div className="flex-1 p-4">
-            <div className="text-center text-gray-500 mt-8">
-              <MdCropSquare className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-              <p className="text-sm">
-                Chọn một thành phần để chỉnh sửa thuộc tính
-              </p>
-            </div>
-          </div>
-
-          <div className="p-4 border-t border-gray-200">
-            <button className="w-full px-4 py-2 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600">
-              Thiết lập thuộc tính trang
-            </button>
+            <PropertiesPanel
+              selectedField={selectedField}
+              onUpdateField={handleUpdateField}
+              onDownloadConfig={handleDownloadConfig}
+            />
           </div>
         </div>
       </div>

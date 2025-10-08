@@ -1,20 +1,19 @@
-import { Button, Form, Typography } from "antd";
-import { type Control } from "react-hook-form";
-import CommonForm from "../CommonForm";
-import type { CommonFormType } from "../../../../types/formFlow";
-import type { FieldTypeFormExclusiveGateway } from "../../../../types/form/exclusiveGateWay.type";
+import { Button, Divider, Form, Typography } from "antd";
 import { BiPlus } from "react-icons/bi";
+import CommonForm from "../CommonForm";
+import BranchItem from "./BranchItem";
+import { v4 as uuidv4 } from "uuid";
 
-interface FormOpenExclusiveGatewayProps {
-  control: Control<FieldTypeFormExclusiveGateway | CommonFormType>;
-}
+const FormOpenExclusiveGateway = () => {
+  console.log("Rendering FormOpenExclusiveGateway");
 
-const FormOpenExclusiveGateway = ({
-  control,
-}: FormOpenExclusiveGatewayProps) => {
   return (
-    <>
-      <CommonForm control={control} />
+    <div className="max-w-3xl mx-auto p-6">
+      <Typography.Title level={3} className="mb-6">
+        Cấu hình Exclusive Gateway
+      </Typography.Title>
+
+      <CommonForm />
 
       <Form.Item>
         <Typography.Title level={5}>Thiết lập nhánh</Typography.Title>
@@ -25,12 +24,52 @@ const FormOpenExclusiveGateway = ({
         </p>
       </Form.Item>
 
-      <Form.Item>
-        <Button size="large" color="default" variant="filled" icon={<BiPlus />}>
-          Thêm nhánh
-        </Button>
-      </Form.Item>
-    </>
+      <Form.List name="branches">
+        {(fields, { add, remove }) => {
+          console.log(`Rendering Form.List with ${fields.length} branches`);
+
+          return (
+            <>
+              {fields.map((field) => {
+                console.log("field", field);
+                return (
+                  <BranchItem
+                    key={field.key}
+                    onRemove={() => {
+                      console.log(`Removing branch at index ${field.name}`);
+                      remove(field.name);
+                    }}
+                    showRemove={fields.length > 1}
+                    name={field.name}
+                  />
+                );
+              })}
+              <Form.Item>
+                <Button
+                  size="large"
+                  type="dashed"
+                  onClick={() => {
+                    const newBranch = {
+                      id: uuidv4(),
+                      name: "",
+                      conditions: "",
+                    };
+                    console.log("Adding new branch:", newBranch);
+                    add(newBranch);
+                  }}
+                  icon={<BiPlus />}
+                  block
+                >
+                  Thêm nhánh
+                </Button>
+              </Form.Item>
+            </>
+          );
+        }}
+      </Form.List>
+
+      <Divider />
+    </div>
   );
 };
 

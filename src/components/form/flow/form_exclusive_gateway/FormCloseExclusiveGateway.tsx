@@ -1,18 +1,18 @@
+// FormCloseExclusiveGateway.tsx
+import { Divider, Typography } from "antd";
 import CommonForm from "../CommonForm";
-import type { CommonFormType } from "../../../../types/formFlow";
-import type { Control } from "react-hook-form";
 
-interface FormCloseExclusiveGatewayProps {
-  control: Control<CommonFormType>;
-}
-
-const FormCloseExclusiveGateway = ({
-  control,
-}: FormCloseExclusiveGatewayProps) => {
+const FormCloseExclusiveGateway = () => {
   return (
-    <>
-      <CommonForm control={control} />
-    </>
+    <div className="max-w-3xl mx-auto p-6">
+      <Typography.Title level={3} className="mb-6">
+        Cấu hình Exclusive Gateway (Đóng)
+      </Typography.Title>
+
+      <CommonForm />
+
+      <Divider />
+    </div>
   );
 };
 

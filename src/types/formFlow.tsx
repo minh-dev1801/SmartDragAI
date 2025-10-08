@@ -1,7 +1,7 @@
 export interface CommonFormType {
   name: string;
   slug: string;
-  description: string;
+  description?: string;
 }
 
 export interface FieldTypeFormSendMail extends CommonFormType {
